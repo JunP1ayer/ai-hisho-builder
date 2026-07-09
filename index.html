@@ -1,0 +1,2161 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta name="robots" content="noindex,nofollow">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI秘書ビルダー（研修版）| Central AX</title>
+<style>
+  :root {
+    --ink: #1F2A33;
+    --sub: #5A6B78;
+    --faint: #8A98A3;
+    --line: #C3CCD2;
+    --line-soft: #E3E8EC;
+    --blue: #1559C2;
+    --blue-deep: #0E3F8E;
+    --paper: #F7F8F9;
+    --bg: #FFFFFF;
+    --font-serif: "Shippori Mincho", "Yu Mincho", "Hiragino Mincho ProW3", serif;
+    --font-sans: "Yu Gothic", "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-serif);
+  }
+
+  body {
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .band {
+    height: 3px;
+    background: var(--blue);
+  }
+
+  .wrap {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 56px 28px 140px;
+  }
+
+  /* ===== header ===== */
+  header { margin-bottom: 40px; }
+  .header-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .header-text { flex: 1 1 280px; min-width: 0; }
+  .kicker {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    letter-spacing: 6px;
+    color: var(--blue);
+    font-weight: 700;
+  }
+  h1.title {
+    font-size: 38px;
+    font-weight: 700;
+    margin: 14px 0 0;
+    letter-spacing: 1px;
+    line-height: 1.4;
+  }
+  .version-tag {
+    display: inline-block;
+    font-family: var(--font-sans);
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--blue);
+    border: 1px solid var(--blue);
+    padding: 2px 9px;
+    margin-left: 14px;
+    vertical-align: middle;
+  }
+  .brand-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-top: 18px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+    flex-wrap: wrap;
+    gap: 10px 24px;
+  }
+  .brand {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    letter-spacing: 3px;
+    color: var(--sub);
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+  .brand b { color: var(--ink); font-weight: 700; }
+  .lede {
+    font-size: 15px;
+    color: var(--sub);
+    font-family: var(--font-sans);
+    letter-spacing: 0.5px;
+    flex: 1 1 280px;
+    min-width: 0;
+    margin: 0;
+  }
+
+  /* ===== mascot ===== */
+  .mascot-col {
+    flex: 0 0 auto;
+    width: 96px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  .mascot-col svg { display: block; width: 76px; height: auto; overflow: visible; }
+  .mascot-col.hop svg { animation: mascotHop .5s ease; }
+  @keyframes mascotHop {
+    0% { transform: translateY(0); }
+    30% { transform: translateY(-8px); }
+    55% { transform: translateY(0) scaleY(.95); }
+    100% { transform: translateY(0); }
+  }
+  .bubble {
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--blue);
+    background: var(--paper);
+    padding: 8px 11px;
+    font-family: var(--font-sans);
+    font-size: 11.5px;
+    color: var(--ink);
+    line-height: 1.6;
+    text-align: left;
+    max-width: 150px;
+  }
+  .bubble.pulse { animation: bubblePulse .3s ease; }
+  @keyframes bubblePulse {
+    0% { opacity: .3; transform: translateY(3px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+
+  /* mascot sprite animations */
+  .cx-cursor { animation: cxBlink 1s steps(1) infinite; }
+  @keyframes cxBlink { 0%,49% { opacity: 1; } 50%,100% { opacity: 0; } }
+  .cx-arm-l { transform-origin: 13px 25px; animation: cxTypeL .5s ease-in-out infinite; }
+  .cx-arm-r { transform-origin: 30.5px 25px; animation: cxTypeR .45s ease-in-out infinite; }
+  @keyframes cxTypeL { 0%,100% { transform: rotate(0deg); } 50% { transform: rotate(-14deg); } }
+  @keyframes cxTypeR { 0%,100% { transform: rotate(0deg); } 50% { transform: rotate(14deg); } }
+  .cx-body { transform-origin: 22px 26px; animation: cxBreathe 3s ease-in-out infinite; }
+  @keyframes cxBreathe { 0%,100% { transform: scale(1,1); } 50% { transform: scale(1.015,.985); } }
+  .cx-hbounce { transform-origin: 22px 24px; animation: cxHop .9s ease-in-out infinite; }
+  @keyframes cxHop { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+  .cx-arm-lh { transform-origin: 10.5px 9px; animation: cxWaveL .3s ease-in-out infinite alternate; }
+  .cx-arm-rh { transform-origin: 33.5px 9px; animation: cxWaveR .3s ease-in-out infinite alternate; }
+  @keyframes cxWaveL { 0% { transform: rotate(-10deg); } 100% { transform: rotate(10deg); } }
+  @keyframes cxWaveR { 0% { transform: rotate(10deg); } 100% { transform: rotate(-10deg); } }
+  .cx-spark { animation: cxSparkle 1.4s steps(1) infinite; opacity: 0; }
+  @keyframes cxSparkle { 0%,100% { opacity: 0; } 50% { opacity: 1; } }
+
+  /* ===== resume banner ===== */
+  .resume-banner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    border: 1px solid var(--blue);
+    background: var(--paper);
+    padding: 12px 18px;
+    margin-bottom: 28px;
+    font-family: var(--font-sans);
+    font-size: 13px;
+    color: var(--ink);
+  }
+  .resume-banner button {
+    font-family: var(--font-sans);
+    background: none;
+    border: 1px solid var(--line);
+    font-size: 12px;
+    padding: 6px 12px;
+    cursor: pointer;
+  }
+  .resume-banner button:hover { border-color: var(--blue); color: var(--blue); }
+
+  /* ===== progress ===== */
+  .progress-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-family: var(--font-sans);
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--faint);
+    margin-bottom: 10px;
+  }
+  .progress-row .progress-num {
+    font-family: var(--font-serif);
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--blue);
+    letter-spacing: 0;
+  }
+
+  /* ===== progress nav ===== */
+  nav.stage-nav {
+    display: flex;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 12px;
+  }
+  .stage-nav button {
+    flex: 1;
+    background: none;
+    border: none;
+    border-right: 1px solid var(--line);
+    padding: 22px 14px;
+    text-align: left;
+    cursor: pointer;
+    font-family: var(--font-serif);
+    color: var(--faint);
+    transition: color 0.15s ease, background 0.15s ease;
+  }
+  .stage-nav button:last-child { border-right: none; }
+  .stage-nav button .num {
+    display: block;
+    font-size: 34px;
+    font-weight: 700;
+    line-height: 1;
+  }
+  .stage-nav button .label {
+    display: block;
+    font-family: var(--font-sans);
+    font-size: 13px;
+    letter-spacing: 2px;
+    margin-top: 8px;
+  }
+  .stage-nav button.active {
+    color: var(--blue);
+    background: var(--paper);
+  }
+  .stage-nav button.done .num::after {
+    content: " 済";
+    font-size: 13px;
+    font-family: var(--font-sans);
+    color: var(--sub);
+    font-weight: 400;
+  }
+  .dl-mark {
+    display: none;
+    margin-top: 6px;
+    font-family: var(--font-sans);
+    font-size: 10px;
+    letter-spacing: 1px;
+    color: var(--blue);
+  }
+
+  .inline-warn {
+    display: none;
+    color: #B3261E;
+    font-family: var(--font-sans);
+    font-size: 13px;
+    margin-bottom: 28px;
+    padding-top: 12px;
+    border-top: 1px dashed var(--line);
+  }
+  .inline-warn.show { display: block; }
+
+  /* ===== stage panel ===== */
+  .stage-panel { display: none; }
+  .stage-panel.active { display: block; }
+
+  .stage-head { margin-bottom: 40px; }
+  .stage-head .stage-eyebrow {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    letter-spacing: 5px;
+    color: var(--faint);
+  }
+  .stage-head h2 {
+    font-size: 28px;
+    font-weight: 700;
+    margin: 10px 0 0;
+  }
+  .stage-head .underline {
+    width: 64px;
+    height: 3px;
+    background: var(--blue);
+    margin-top: 18px;
+  }
+  .stage-head p.desc {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    color: var(--sub);
+    margin-top: 16px;
+    letter-spacing: 0.5px;
+  }
+
+  /* ===== form groups ===== */
+  .group { margin-bottom: 44px; }
+  .group-label {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    letter-spacing: 3px;
+    color: var(--faint);
+    font-weight: 700;
+  }
+  .group-hr { border-top: 1px solid var(--line); margin-top: 10px; }
+
+  .field-row {
+    display: flex;
+    gap: 32px;
+    margin-top: 22px;
+    flex-wrap: wrap;
+  }
+  .field { flex: 1 1 220px; margin-top: 18px; }
+  .field-row .field { margin-top: 0; }
+  .field label {
+    display: block;
+    font-family: var(--font-sans);
+    font-size: 12px;
+    color: var(--sub);
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+  .field input[type="text"] {
+    width: 100%;
+    border: none;
+    border-bottom: 1px solid var(--line);
+    background: transparent;
+    font-family: var(--font-serif);
+    font-size: 17px;
+    color: var(--ink);
+    padding: 8px 2px;
+    outline: none;
+  }
+  .field input[type="text"]:focus { border-bottom-color: var(--blue); }
+  .field input[type="text"]::placeholder { color: #C6CDD3; }
+
+  .hint {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    color: var(--sub);
+    margin-top: 14px;
+    line-height: 1.8;
+  }
+
+  /* tools / roles grid (checkbox) */
+  .tool-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: 0;
+    margin-top: 18px;
+    border-top: 1px solid var(--line-soft);
+    border-left: 1px solid var(--line-soft);
+  }
+  .tool-cell {
+    border-right: 1px solid var(--line-soft);
+    border-bottom: 1px solid var(--line-soft);
+    padding: 16px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+  }
+  .tool-cell input { accent-color: var(--blue); width: 16px; height: 16px; }
+  .tool-cell span { font-size: 15.5px; }
+  .tool-cell.checked { background: var(--paper); }
+
+  /* skill/perm list w/ badge (reused for stage2 skills, agent team, permissions) */
+  .skill-list { margin-top: 18px; }
+  .skill-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 18px 4px;
+    border-top: 1px solid var(--line-soft);
+    cursor: pointer;
+  }
+  .skill-list .skill-row:last-child, .skill-row.fixed { border-bottom: 1px solid var(--line-soft); }
+  .skill-row input { margin-top: 5px; accent-color: var(--blue); width: 16px; height: 16px; flex: 0 0 auto; }
+  .skill-row .choice-text { flex: 1; }
+  .skill-row .skill-title {
+    font-size: 17px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .skill-row .skill-title code {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    color: var(--blue-deep);
+    background: var(--paper);
+    padding: 2px 8px;
+    border: 1px solid var(--line);
+  }
+  .skill-row .skill-sub {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    color: var(--sub);
+    margin-top: 6px;
+    line-height: 1.7;
+  }
+  .badge-osusume {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    letter-spacing: 1px;
+    color: #fff;
+    background: var(--blue);
+    padding: 3px 8px;
+    white-space: nowrap;
+  }
+  .badge-hitsu {
+    font-family: var(--font-sans);
+    font-size: 10px;
+    letter-spacing: 1px;
+    color: #fff;
+    background: var(--ink);
+    padding: 2px 7px;
+    white-space: nowrap;
+  }
+  .skill-row.checked { background: var(--paper); }
+  .skill-row.fixed { background: var(--paper); cursor: default; opacity: .85; }
+
+  /* checklist w/ score */
+  .score-panel {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    border: 1px solid var(--line);
+    padding: 32px 36px;
+    margin-bottom: 36px;
+  }
+  .score-num {
+    font-size: 72px;
+    font-weight: 700;
+    color: var(--blue);
+    line-height: 1;
+    white-space: nowrap;
+  }
+  .score-num span { font-size: 26px; color: var(--faint); font-weight: 400; }
+  .score-body { flex: 1; }
+  .score-body .score-label {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    letter-spacing: 3px;
+    color: var(--faint);
+    font-weight: 700;
+  }
+  .score-body .score-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin-top: 8px;
+  }
+  .score-body .score-advice {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    color: var(--sub);
+    margin-top: 10px;
+    line-height: 1.8;
+  }
+
+  .doc-list { border-top: 1px solid var(--line-soft); margin-top: 18px; }
+  .doc-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 4px;
+    border-bottom: 1px solid var(--line-soft);
+    cursor: pointer;
+  }
+  .doc-row input { accent-color: var(--blue); width: 16px; height: 16px; }
+  .doc-row .doc-title { font-size: 16px; }
+  .doc-row.checked { background: var(--paper); }
+  .doc-row.fixed { cursor: default; background: var(--paper); opacity: .85; }
+
+  /* buttons */
+  .btn-row {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+  }
+  .btn-primary {
+    font-family: var(--font-sans);
+    background: var(--blue);
+    color: #fff;
+    border: none;
+    padding: 15px 32px;
+    font-size: 14.5px;
+    letter-spacing: 2px;
+    cursor: pointer;
+  }
+  .btn-primary:hover { background: var(--blue-deep); }
+  .btn-secondary {
+    font-family: var(--font-sans);
+    background: none;
+    border: 1px solid var(--line);
+    color: var(--ink);
+    padding: 14px 24px;
+    font-size: 13.5px;
+    letter-spacing: 1px;
+    cursor: pointer;
+  }
+  .btn-secondary:hover { border-color: var(--blue); color: var(--blue); }
+  .copy-feedback {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    color: var(--blue);
+    letter-spacing: 1px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+  .copy-feedback.show { opacity: 1; }
+
+  .output-block { margin-top: 32px; }
+  .output-block .group-label { margin-bottom: 10px; display: block; }
+  textarea.output {
+    width: 100%;
+    min-height: 220px;
+    border: 1px solid var(--line);
+    background: var(--paper);
+    font-family: var(--font-serif);
+    font-size: 14.5px;
+    line-height: 1.9;
+    color: var(--ink);
+    padding: 20px;
+    resize: vertical;
+    outline: none;
+  }
+  textarea.output:focus { border-color: var(--blue); }
+  textarea.output::placeholder { color: var(--faint); }
+
+  /* ===== result / teacher blocks ===== */
+  .result-block {
+    border: 1px solid var(--blue);
+    background: var(--paper);
+    padding: 26px 28px;
+    margin-top: 14px;
+  }
+  .result-block .rb-head {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    letter-spacing: 2px;
+    color: var(--blue);
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  .result-block .rb-lead {
+    font-family: var(--font-sans);
+    font-size: 13.5px;
+    color: var(--sub);
+    margin-bottom: 18px;
+    line-height: 1.8;
+  }
+  .teacher-panel {
+    border-left: 3px solid var(--blue);
+    background: #fff;
+    padding: 16px 20px;
+    margin-top: 24px;
+    font-family: var(--font-sans);
+    font-size: 13.5px;
+    color: var(--ink);
+    line-height: 1.9;
+  }
+  .teacher-panel b { color: var(--blue-deep); }
+  .learn { margin-top: 12px; }
+  .learn summary {
+    cursor: pointer;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--blue-deep);
+    list-style: none;
+  }
+  .learn summary::-webkit-details-marker { display: none; }
+  .learn summary::before { content: "▶ "; font-size: 10px; }
+  .learn[open] summary::before { content: "▼ "; }
+  .learn-body {
+    margin-top: 8px;
+    font-size: 13px;
+    color: var(--sub);
+    line-height: 1.9;
+    border-top: 1px dashed var(--line);
+    padding-top: 10px;
+  }
+  .learn-body b { color: var(--blue-deep); }
+  .learn-body code {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    padding: 0 4px;
+    font-family: var(--font-sans);
+    font-size: 12.5px;
+  }
+
+  /* ===== stage footer nav ===== */
+  .stage-foot {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 56px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .stage-foot button {
+    font-family: var(--font-sans);
+    background: none;
+    border: none;
+    color: var(--sub);
+    font-size: 14px;
+    letter-spacing: 2px;
+    cursor: pointer;
+  }
+  .stage-foot button:hover { color: var(--blue); }
+  .stage-foot button.next { color: var(--blue); font-weight: 700; }
+
+  /* ===== completion screen ===== */
+  .clear-wrap { text-align: center; padding: 24px 0 8px; }
+  .stamp {
+    display: inline-block;
+    border: 3px solid var(--blue);
+    color: var(--blue);
+    font-family: var(--font-serif);
+    font-weight: 700;
+    font-size: 26px;
+    letter-spacing: 10px;
+    padding: 14px 26px;
+    transform: rotate(-3deg);
+    position: relative;
+  }
+  .stamp::after { content: ""; position: absolute; inset: 5px; border: 1px solid var(--blue); }
+  .clear-title { font-size: 26px; font-weight: 700; margin: 24px 0 8px; }
+  .clear-sub { font-family: var(--font-sans); font-size: 14px; color: var(--sub); }
+  .clear-line { width: 64px; height: 3px; background: var(--blue); margin: 26px auto; }
+  .clear-recap {
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    padding: 26px 0;
+    margin-bottom: 26px;
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 12px 16px;
+  }
+  .clear-recap dt {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    color: var(--faint);
+    letter-spacing: 1px;
+  }
+  .clear-recap dd { margin: 0; font-size: 15px; }
+  .first-word {
+    display: inline-block;
+    border: 1px solid var(--ink);
+    padding: 10px 30px;
+    font-size: 22px;
+    font-weight: 700;
+    margin: 14px 0 8px;
+  }
+  .reset-link {
+    font-family: var(--font-sans);
+    font-size: 12.5px;
+    color: var(--faint);
+    background: none;
+    border: none;
+    text-decoration: underline;
+    cursor: pointer;
+    padding: 0;
+  }
+  .reset-link:hover { color: var(--blue); }
+
+  /* ===== footer ===== */
+  footer {
+    margin-top: 96px;
+    border-top: 1px solid var(--line);
+    padding-top: 40px;
+  }
+  footer .footer-kicker {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    letter-spacing: 4px;
+    color: var(--faint);
+    font-weight: 700;
+  }
+  footer h3 {
+    font-size: 22px;
+    font-weight: 700;
+    margin: 12px 0 18px;
+  }
+  footer .cmd-block {
+    font-family: var(--font-sans);
+    background: var(--paper);
+    border: 1px solid var(--line);
+    padding: 18px 22px;
+    font-size: 14px;
+    color: var(--ink);
+    line-height: 2;
+  }
+  footer .cmd-block .arrow { color: var(--faint); margin: 0 10px; }
+  footer p.note {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    color: var(--sub);
+    margin-top: 18px;
+    letter-spacing: 0.5px;
+  }
+
+  @media (max-width: 600px) {
+    .stage-nav { flex-direction: column; }
+    .stage-nav button { border-right: none; border-bottom: 1px solid var(--line); }
+    .stage-nav button:last-child { border-bottom: none; }
+    .score-panel { flex-direction: column; align-items: flex-start; gap: 20px; }
+  }
+
+  @media (max-width: 480px) {
+    .wrap { padding: 40px 18px 100px; }
+    h1.title { font-size: 25px; }
+    .version-tag { margin-left: 0; margin-top: 8px; }
+    .header-flex { flex-direction: column; }
+    .header-text { flex: 0 0 auto; width: 100%; }
+    .mascot-col { align-self: flex-end; width: 64px; flex: 0 0 auto; margin-top: -16px; }
+    .mascot-col svg { width: 56px; }
+    .bubble { max-width: 170px; font-size: 10.5px; padding: 6px 9px; }
+    .result-block { padding: 18px 16px; }
+    .clear-recap { grid-template-columns: 1fr; }
+    .score-num { font-size: 52px; }
+    .tool-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+  }
+</style>
+</head>
+<body>
+
+<div class="band"></div>
+
+<div class="wrap">
+
+  <header>
+    <div class="header-flex">
+      <div class="header-text">
+        <div class="kicker">AI SECRETARY BUILDER</div>
+        <h1 class="title">AI秘書ビルダー<span class="version-tag">研修版</span></h1>
+      </div>
+      <div class="mascot-col" id="mascotCol">
+        <div id="mascotSlot"></div>
+        <div class="bubble" id="bubble">会社名とお名前を入れたら、まず役割を選んでみてください（複数選べます）。</div>
+      </div>
+    </div>
+    <div class="brand-row">
+      <p class="lede">質問に答えるだけで、あなた専用の「AI秘書」の初期設定プロンプトを組み立てます（Central AX Claude Code研修 配布版）。</p>
+      <div class="brand"><b>Central AX</b></div>
+    </div>
+  </header>
+
+  <div class="resume-banner" id="resumeBanner" style="display:none;">
+    <span>続きから再開しました。前回の入力と進捗（実装・DL済み）を復元しています。</span>
+    <span style="display:flex;gap:8px;">
+      <button type="button" onclick="closeResumeBanner()">閉じる</button>
+      <button type="button" onclick="resetAll()">最初から</button>
+    </span>
+  </div>
+
+  <div class="progress-row">
+    <span>SETUP PROGRESS</span>
+    <span><span class="progress-num" id="progressNum">0</span>/3 実装済み</span>
+  </div>
+
+  <nav class="stage-nav" id="stageNav">
+    <button type="button" class="active" data-stage="1" onclick="go(1)">
+      <span class="num">01</span>
+      <span class="label">ガワをつくる</span>
+      <span class="dl-mark" id="dlMark1">✓ DL済み</span>
+    </button>
+    <button type="button" data-stage="2" onclick="go(2)">
+      <span class="num">02</span>
+      <span class="label">能力をさずける</span>
+      <span class="dl-mark" id="dlMark2">✓ DL済み</span>
+    </button>
+    <button type="button" data-stage="3" onclick="go(3)">
+      <span class="num">03</span>
+      <span class="label">中身をそだてる</span>
+      <span class="dl-mark" id="dlMark3">✓ DL済み</span>
+    </button>
+  </nav>
+  <div class="inline-warn" id="stageWarn"></div>
+
+  <!-- ============ STAGE 1 ============ -->
+  <section class="stage-panel active" id="stage-1">
+    <div class="stage-head">
+      <div class="stage-eyebrow">STAGE 1</div>
+      <h2>ガワをつくる</h2>
+      <div class="underline"></div>
+      <p class="desc">会社名・役割・連携ツール・権限方針を決めると、Claude Codeに貼るだけの初期設定プロンプトができあがります。</p>
+    </div>
+
+    <div class="group">
+      <div class="group-label">基本情報</div>
+      <div class="group-hr"></div>
+      <div class="field-row">
+        <div class="field">
+          <label>会社名</label>
+          <input type="text" id="company" placeholder="例：Central AX">
+        </div>
+        <div class="field">
+          <label>あなたの名前</label>
+          <input type="text" id="personName" placeholder="例：松浦">
+        </div>
+        <div class="field">
+          <label>AI秘書の名前（任意）</label>
+          <input type="text" id="aiName" placeholder="例：カナリア">
+        </div>
+      </div>
+    </div>
+
+    <div class="group">
+      <div class="group-label">役割を選ぶ（複数選択可）</div>
+      <div class="group-hr"></div>
+      <div class="tool-grid" id="roleGrid"></div>
+      <p class="hint">経営者が営業も採用も兼ねる、といった兼任もOKです。複数選ぶと、おすすめのスキルとチームがすべて合わさって出てきます。当てはまらなければ「その他」に自由入力してください。</p>
+      <div class="field" id="roleOtherBox" style="display:none;">
+        <label>その他の役割</label>
+        <input type="text" id="roleOtherInput" placeholder="あなたの役割を書いてください（例：税理士／カスタマーサクセス／製造現場／デザイナー）">
+      </div>
+    </div>
+
+    <div class="group">
+      <div class="group-label">連携ツール（複数選択可）</div>
+      <div class="group-hr"></div>
+      <div class="tool-grid" id="toolGrid"></div>
+      <div class="field">
+        <label>その他のツール（自由入力）</label>
+        <input type="text" id="toolsFree" placeholder="カンマ区切りで追記。例：kintone, Box, freee, HubSpot">
+      </div>
+    </div>
+
+    <div class="group">
+      <div class="group-label">権限方針（「推奨」はチェック済み・あとから変更可）</div>
+      <div class="group-hr"></div>
+      <div class="skill-list">
+        <div class="skill-row fixed">
+          <input type="checkbox" checked disabled>
+          <span class="choice-text">
+            <span class="skill-title">破壊系コマンド・機密ファイル読取は deny <span class="badge-hitsu">固定</span></span>
+            <span class="skill-sub">安全の最低ライン。下のトグルの設定によらず常にこの状態です。</span>
+          </span>
+        </div>
+      </div>
+      <div class="skill-list" id="permList"></div>
+    </div>
+
+    <div class="btn-row">
+      <button type="button" class="btn-primary" onclick="impl(1)">① ガワを組み立てる（第1部プロンプトを生成）</button>
+    </div>
+
+    <div class="output-block">
+      <label class="group-label">Claude Codeに貼る初期設定プロンプト</label>
+      <textarea class="output" id="output1" placeholder="「組み立てる」を押すと、ここに初期設定プロンプトが表示されます" readonly></textarea>
+    </div>
+    <div id="result1"></div>
+
+    <div class="stage-foot">
+      <span></span>
+      <button type="button" class="next" onclick="go(2)">次へ：能力をさずける →</button>
+    </div>
+  </section>
+
+  <!-- ============ STAGE 2 ============ -->
+  <section class="stage-panel" id="stage-2">
+    <div class="stage-head">
+      <div class="stage-eyebrow">STAGE 2</div>
+      <h2>能力をさずける</h2>
+      <div class="underline"></div>
+      <p class="desc">全員固定のユニバーサル・スキルに加えて、選んだ役割の鉄板スキルとAgent Teamを選びます。</p>
+    </div>
+
+    <div id="step2Body"></div>
+
+    <div class="btn-row">
+      <button type="button" class="btn-primary" onclick="impl(2)">② 能力を組み立てる（第2部プロンプトを生成）</button>
+    </div>
+
+    <div class="output-block">
+      <label class="group-label">Claude Codeに貼るスキル・チーム作成プロンプト</label>
+      <textarea class="output" id="output2" placeholder="「組み立てる」を押すと、ここにプロンプトが表示されます" readonly></textarea>
+    </div>
+    <div id="result2"></div>
+
+    <div class="stage-foot">
+      <button type="button" onclick="go(1)">← 戻る：ガワをつくる</button>
+      <button type="button" class="next" onclick="go(3)">次へ：中身をそだてる →</button>
+    </div>
+  </section>
+
+  <!-- ============ STAGE 3 ============ -->
+  <section class="stage-panel" id="stage-3">
+    <div class="stage-head">
+      <div class="stage-eyebrow">STAGE 3</div>
+      <h2>中身をそだてる</h2>
+      <div class="underline"></div>
+      <p class="desc">context/ フォルダに入れる資料をチェックすると、自社理解度スコアと次に足すと効く資料がわかります。</p>
+    </div>
+
+    <div class="score-panel">
+      <div class="score-num" id="scoreNum">0<span> / 100点</span></div>
+      <div class="score-body">
+        <div class="score-label">自社理解度スコア</div>
+        <div class="score-title" id="scoreTitle">まだ資料が入っていません</div>
+        <div class="score-advice" id="scoreAdvice">先に①で役割を選ぶと、資料の候補が表示されます。</div>
+      </div>
+    </div>
+
+    <div class="group">
+      <div class="group-label">contextフォルダに入れる資料</div>
+      <div class="group-hr"></div>
+      <div id="step3Body"></div>
+    </div>
+
+    <div class="btn-row">
+      <button type="button" class="btn-primary" onclick="impl(3)">③ 中身を組み立てる（第3部プロンプトを生成）</button>
+    </div>
+
+    <div class="output-block">
+      <label class="group-label">Claude Codeに貼る資料読み込みプロンプト</label>
+      <textarea class="output" id="output3" placeholder="「組み立てる」を押すと、ここにプロンプトが表示されます" readonly></textarea>
+    </div>
+    <div id="result3"></div>
+
+    <div class="stage-foot">
+      <button type="button" onclick="go(2)">← 戻る：能力をさずける</button>
+      <button type="button" class="next" onclick="goComplete()">完成画面へ →</button>
+    </div>
+  </section>
+
+  <!-- ============ STAGE 4 (completion, filled by JS) ============ -->
+  <section class="stage-panel" id="stage-4"></section>
+
+  <footer id="mainFooter">
+    <div class="footer-kicker">GO FURTHER</div>
+    <h3>もっと本格的に始めたい方へ</h3>
+    <div class="cmd-block">
+      claude plugin marketplace add JunP1ayer/claude-plugins<span class="arrow">→</span>/first-setup
+    </div>
+    <p class="note">Central AX Claude Code研修で配布している教材です。</p>
+    <p class="note"><button type="button" class="reset-link" onclick="resetAll()">最初からやり直す（入力内容をすべて削除）</button></p>
+  </footer>
+
+</div>
+
+<!-- ============ 同梱ガイド（DL時に結合。fetchは使わない） ============ -->
+<script type="text/plain" id="guideDoc1"># 構築指示書 第1部「ガワ」— 作業環境をつくる
+
+> **この指示書の上に書かれている「あなたの決定」を読んでから、以下の手順を実行すること。**
+> 「あなたの決定」には会社名・担当者名・秘書名・選んだ役割・連携ツール・権限方針（6つのトグルのON/OFF）が書かれている。この第1部では、その決定内容を実際のフォルダ設定・ファイルに変換する。ここで作るのはAI秘書の「体（ガワ）」＝作業場所とルールブック。中身（会社知識）は第3部、能力（スキル）は第2部で追加する。
+
+## 1. フォルダを作成する
+
+プロジェクト直下に次の3つを作成する。
+
+- `context/` — 会社の正しい情報を置く場所（ストック情報）。さらに用途別のサブフォルダを提案し、「あなたの決定」の役割・連携ツールに合わせて必要なものだけ作る。
+  - `context/company/` — 会社概要・沿革・組織図
+  - `context/customers/` — 顧客リスト・取引先情報
+  - `context/products/` — 商品・サービス資料、料金表
+  - `context/faq/` — よくある質問と回答、社内用語集
+- `work/` — 日々の作業ファイルを置く場所（毎日入れ替わるフロー情報）
+- `.claude/` — 設定・スキル・権限を格納する場所（このあと作るCLAUDE.mdとsettings.jsonの置き場）
+
+既にこれらのフォルダがある場合は作り直さず、中身を確認したうえで流用する。
+
+## 2. CLAUDE.md を作成する
+
+`CLAUDE.md` はAI秘書が毎回のセッションで自動的に読み込む「取扱説明書」。長文にせず、次の構成で簡潔に書く。
+
+### 2-1. 絶対ルール（最上部に固定で入れる）
+
+1. 常に日本語で応答する
+2. 社外・顧客向けの送信物（メール・資料・SNS投稿など）は、必ず下書きを提示し、担当者本人の許可を得てから送信する
+3. 機密情報（顧客名・金額・個人情報など）は外部に送る文書・メッセージには一切含めない
+
+### 2-2. 会社・本人・役割
+
+「あなたの決定」に書かれた内容をそのまま転記する。
+
+```markdown
+## 会社・本人・役割
+- 会社名：<会社名>
+- 担当者（採用者）：<担当者名>
+- 役割：<選んだ役割（複数可）> の業務を支援する秘書として、資料整理・連絡・スケジュール調整を行う
+- 連携ツール：<連携ツール一覧>
+```
+
+### 2-3. AI秘書の名前と振る舞い
+
+「あなたの決定」の秘書名を使い、一人称・口調を決めて明文化する（例：一人称は「わたし」、丁寧語、結論から簡潔に話す）。この節が、AI秘書の人格の唯一の設定源になる。
+
+```markdown
+## AI秘書について
+- 名前：<秘書名>
+- 一人称・口調：<決めた内容>
+- 振る舞い：分からないことは推測せず担当者に確認する。判断が分かれる作業は必ず一言相談してから進める。
+```
+
+## 3. .claude/settings.json で権限を設定する
+
+「あなたの決定」の権限方針は、6つのトグル（①外部送信の下書き確認／②自動コミット／③読み取り系コマンドの自動許可／④機密フォルダ書き込みの都度確認／⑤自動push／⑥Webアクセス許可）のON/OFFで示される。これを実際にツールの動きを制御する `permissions` に変換する。**破壊的コマンドと機密フォルダのdenyは、トグルの組み合わせによらず必ず固定で入れる。**
+
+### 3-1. 固定deny（トグルの組み合わせによらず常に入れる）
+
+```json
+{
+  "permissions": {
+    "deny": [
+      "Bash(rm -rf:*)",
+      "Bash(git push --force:*)",
+      "Bash(git reset --hard:*)",
+      "Bash(format:*)",
+      "PowerShell(Remove-Item -Recurse:*)",
+      "Read(./secrets/**)",
+      "Read(./.env)",
+      "Edit(./secrets/**)",
+      "Edit(./.env)"
+    ]
+  }
+}
+```
+
+secrets/フォルダや.envを使わない場合は、その2行を省いてよい。
+
+### 3-2. トグルごとの設定
+
+| トグル | ONの場合 | OFFの場合 |
+|---|---|---|
+| ① 外部送信は下書き→許可制 | メール送信・Slack投稿など外部送信系ツールを `permissions.ask` に登録し、送信前に必ず確認を挟む | 都度確認なしで送信させる場合は、CLAUDE.mdにその旨を明記し、誤送信時の対応方針も決めておく |
+| ② タスク完了で自動コミット | 作業がひと区切りつくたびに `git add` → `git commit` を自動で行う運用にする。コミットメッセージの書式をCLAUDE.mdに明記する | 明示的に指示があったときのみコミットする |
+| ③ 読み取り系コマンドは自動許可 | `Bash(ls:*)` `Bash(grep:*)` `Bash(cat:*)` `Bash(find:*)` 等の読み取り系コマンドを `permissions.allow` に登録する | 読み取り系コマンドも都度確認する（allowに追加しない） |
+| ④ 機密フォルダへの書き込みは毎回確認 | `secrets/` など機密フォルダへの `Write` / `Edit` を `permissions.ask` に登録する（読み取りは3-1の固定denyで別途保護済み） | 非推奨。機密フォルダへの誤書き込みが起きうるため、基本的にONのまま運用する |
+| ⑤ コミット後に自動push | `git push` も自動で実行する運用にする | pushは明示的な指示があったときのみ実行する（askのままにするか未登録にする） |
+| ⑥ Webアクセスを許可 | `WebFetch` `WebSearch` 等を `permissions.allow` に登録する | Web系ツールは `permissions.ask` のままにするか登録しない |
+
+例：①②③④をON、⑤⑥をOFF（推奨の初期値）にした場合の完成形。
+
+```json
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls:*)",
+      "Bash(grep:*)",
+      "Bash(cat:*)",
+      "Bash(find:*)"
+    ],
+    "ask": [
+      "Bash(git push:*)",
+      "Write(./secrets/**)",
+      "Edit(./secrets/**)"
+    ],
+    "deny": [
+      "Bash(rm -rf:*)",
+      "Bash(git push --force:*)",
+      "Bash(git reset --hard:*)",
+      "PowerShell(Remove-Item -Recurse:*)",
+      "Read(./secrets/**)",
+      "Read(./.env)",
+      "Edit(./secrets/**)",
+      "Edit(./.env)"
+    ]
+  }
+}
+```
+
+外部送信系のツール（Gmail・Slack等のMCPツール）は接続方式によって実際のツール名が変わるため、接続後の正式なツール名を確認して `permissions.ask` に追記する。既存の`.claude/settings.json`がある場合は上書きせず、上記のエントリを既存の配列に追記する。
+
+## 4. 連携ツールを接続する
+
+「あなたの決定」の連携ツール一覧を、**優先順位（コネクタ → CLI → 自作MCP）**で接続する。同じツールに複数の方法がある場合、上から順に試す。
+
+1. まず公式コネクタ（MCP）が使えないか確認する。管理者権限が必要なものは担当者に依頼する
+2. コネクタが無ければ、そのツールの公式CLIがないか確認する
+3. どちらも無ければ、最小権限の自作MCP（API直叩き）を検討する。この場合はAPIキーの置き場（後述）を先に決める
+
+| ツール | 接続方法 |
+|---|---|
+| Slack | 公式Slackコネクタ（MCP）を最優先で接続し、投稿先チャンネルと権限範囲を確認する |
+| Gmail | 公式Gmailコネクタ（MCP）を接続し、秘書用に権限範囲（送信・下書きのみ等）を絞る |
+| Googleカレンダー | 公式Googleカレンダーコネクタ（MCP）を接続し、閲覧・作成権限を確認する |
+| Google Drive | 公式Google Driveコネクタ（MCP）を接続し、アクセスできる共有ドライブの範囲を確認する |
+| Notion | 公式Notionコネクタ（MCP）があれば接続。無ければNotion CLIか自作MCPを検討する |
+| Chatwork | 公式コネクタが無いことが多いため、CLIか自作MCP（Chatwork API）での接続を検討する |
+
+## 5. 動作確認
+
+すべて設定できたら、担当者に対して「おはよう」と話しかけてもらい、次の2点が返るか確認する。
+
+- AI秘書としての簡単な自己紹介（名前・支援する役割）
+- 今日の段取り（分かる範囲でよい。連携ツール未接続なら「まだ予定を確認できません」と正直に答える）
+
+意図した振る舞いと違えば、CLAUDE.mdの記載を見直す。
+
+## 付録：セキュリティ最低限
+
+- APIキー・パスワードは `secrets/` フォルダか `.env` のどちらかに置き、CLAUDE.mdやSKILL.mdなど読み込まれるドキュメントには直書きしない
+- 上記3-1の固定denyは、Read/Editツール経由の読み取りしかブロックできない。Bash/PowerShell経由での読み取りまでは防げないため「絶対に読めない」ではなく事故防止の第一層と理解する
+- gitを使う場合は`secrets/`と`.env`を`.gitignore`にも追加する
+
+---
+Central AX Claude Code研修 教材　v1.1
+</script>
+<script type="text/plain" id="guideDoc2"># 構築指示書 第2部「能力」— スキルとチームをつくる
+
+> **この指示書の上に書かれている「あなたの決定」（受講する研修＝スキル一覧）を読んでから、以下の手順を実行すること。**
+> 第1部でAI秘書の体（フォルダ・ルール）ができた。第2部では、実際に手を動かせる「能力」＝スキル（スラッシュコマンド）とAgent Team（複数エージェントの分担）を組み立てる。
+
+## 1. スキルの作り方（共通ルール）
+
+スキルは `.claude/skills/<スキル名>/SKILL.md` という1ファイルで定義する。1スキル＝1フォルダ。
+
+```markdown
+---
+name: <スキル名（英数字とハイフン）>
+description: <このスキルを「いつ使うか」を具体的に書く。ここが自動起動の判定材料になるため、トリガーになる言葉（「〜して」「〜まとめて」等）を含める>
+---
+
+# <スキル名>
+
+## 目的
+<何のためのスキルか1-2行>
+
+## 入力
+<何を渡すか（例：カレンダーの予定、メール文面、レシート画像）>
+
+## 手順
+1. ...
+2. ...
+
+## 出力
+<何を返すか（例：段取り表、チェック結果、起票データ）>
+
+## Gotchas（過去の失敗メモ）
+<運用中に見つかった落とし穴をここに追記していく。作成時点は空欄でよい>
+```
+
+**descriptionの書き方が重要**：「◯◯して」「◯◯まとめて」のようにユーザーが実際に話しかける言い回しを具体的に書くと、そのスキルが自動的に起動する。抽象的な説明だけだと起動しない。
+
+**Gotchas枠は必ず作る**：一度失敗した・想定外だった挙動を書き足していく場所。次に同じスキルを使うときや、似たスキルを新しく作るときの事故防止になる。
+
+## 2. universalスキル（全員に必ず作る2つ）
+
+配属先や選んだ研修に関わらず、以下の2つは最初に作成する。
+
+### 2-1. `/daily-schedule`（朝の段取り表）
+
+- **目的**：カレンダーとタスクから、今日の段取り表を作る
+- **入力**：接続済みのカレンダー（Googleカレンダー等）の今日の予定、work/内の未完了タスクメモ
+- **手順**：
+  1. 今日の予定を時系列に並べる
+  2. 予定の合間に処理できそうなタスクを差し込む
+  3. 優先度が高い・締切が近いタスクを冒頭に出す
+- **出力**：時刻順の段取り表（予定＋差し込みタスク）。担当者が朝一番に見て動けるように、要確認事項があれば先頭に出す
+- **Gotchas**：（運用開始後に追記）
+
+### 2-2. `/mtg-prep`（次の会議の事前情報まとめ）
+
+- **目的**：次に控えている会議の参加者・議題・過去の関連メモをまとめて事前に渡す
+- **入力**：カレンダーの次の予定（会議）、context/customers内の関連情報、過去の議事録（あれば）
+- **手順**：
+  1. 会議の参加者・時間・場所（オンライン/対面）を特定する
+  2. 参加者に関する情報をcontext/から拾う（初対面か、過去のやり取りがあるか）
+  3. 議題が分かれば、話すべき論点・確認したい数字を整理する
+- **出力**：会議名・参加者・想定論点・持参すべき資料のミニまとめ
+- **Gotchas**：（運用開始後に追記）
+
+## 3. 役割別スキル（「あなたの決定」の研修一覧から作る）
+
+「あなたの決定」に記載された研修（スキルID・コマンド名・概要）を1つずつ、次の手順で具体化する。**概要文だけでは実装に足りないため、必ず担当者に会話でヒアリングしてから作る。**
+
+1. 研修一覧から1件選ぶ
+2. 担当者に次を聞く（AskUserQuestion等の選択式が使えるならそれで聞く）
+   - 具体的にどんな入力を渡すことが多いか（例：レシート画像／メールの下書き／会議メモ）
+   - 出力はどんな形式が使いやすいか（表・箇条書き・特定のシート等）
+   - 過去に困った・失敗した経験があるか（あればGotchasの初期エントリにする）
+3. ヒアリング内容をもとに、上記フォーマットでSKILL.mdを作成する
+4. 概要文にある名称・コマンド名は「あなたの決定」の表記のまま使う（担当者が覚えている名前を変えない）
+5. 全件作り終えたら一覧で「修了証：発行済み」として報告する
+
+## 4. Agent Team（複数エージェントの分担）
+
+1つのスキルで完結しない、複数工程にまたがる仕事は、サブエージェントに分担させる「Agent Team」を組む。定義は `.claude/agents/<エージェント名>.md` に1体ずつ置く。
+
+### 組み方
+
+1. 仕事を工程に分解する（例：顧客リサーチ→競合分析→設計→執筆→レビュー）
+2. 工程ごとに担当エージェントを1体ずつ定義する。各エージェントのfrontmatterに`description`（いつ呼ばれるか）と、必要なツールだけを絞って書く
+3. 最後の工程（レビュー等）は、前工程の担当とは別のエージェントにする（自分の作業を自分で採点しないため）
+4. 呼び出し順（フロー）をメインのCLAUDE.mdかチーム定義の冒頭に明記する
+
+### 例：顧客リサーチ→競合分析→設計→執筆→レビュー
+
+```
+1. researcher   : 顧客リサーチ（対象企業の情報収集）
+2. competitor   : 競合分析（同業他社との比較）
+3. planner      : 構成設計（1・2を踏まえた提案の骨子）
+4. writer       : 執筆（骨子から本文作成）
+5. reviewer     : レビュー（誤り・トーン・機密混入チェック）
+```
+
+**まずは単発スキルから慣れることを推奨する。** Agent Teamは工程間の受け渡しミスが起きやすいため、単発スキル（第2部の2〜3節）で運用に慣れてから、複数工程にまたがる仕事が増えてきたタイミングで組むのがよい。
+
+## 5. 動作確認
+
+作成したスキルのうち1つを実際に呼び出してみる（例：`/daily-schedule`）。想定した入力を渡し、出力が仕様どおりの形式で返るか確認する。ズレがあればSKILL.mdの手順を修正する。
+
+---
+Central AX Claude Code研修 教材　v1.0
+</script>
+<script type="text/plain" id="guideDoc3"># 構築指示書 第3部「中身」— 会社を理解させる
+
+> **この指示書の上に書かれている「あなたの決定」（引き継ぎ済み資料一覧・自社理解度スコア）を読んでから、以下の手順を実行すること。**
+> 第1部で体、第2部で能力ができた。第3部では `context/` の中身を充実させ、AI秘書に会社を理解させる。ここが薄いと、どれだけスキルを作っても的外れな仕事しかできない。
+
+## 1. context/ の考え方：ストックとフローを分ける
+
+- **ストック**＝今の正しい状態。会社概要・料金表・顧客リストなど、変わるたびに**上書き更新**する情報。`context/`直下（company/ customers/ products/ faq/ 等）に置く
+- **フロー**＝議事録・作業ログなど、時系列で**追記**していく情報。古い記録を消さず積み上げる。`work/`側、または`context/`内でも`log/`のような専用フォルダに分けて置く
+
+この2つを同じファイルに混ぜない。ストックのファイルに日々のメモを書き足すと、どこが「今の正しい情報」か分からなくなる。
+
+## 2. 資料を1つずつcontext/へ入れる
+
+「あなたの決定」に書かれた引き継ぎ済み資料（会社概要・沿革／商品・サービス資料／料金表・見積ひな形／顧客リスト／よくある質問と回答／社内用語集／過去の提案書サンプル 等）を、次の手順で1件ずつ処理する。
+
+1. 資料の所在を担当者に確認する（既存ファイルがある／口頭で説明してもらう しかない、のどちらか）
+2. **ファイルがある場合**：ファイルを置いてもらう場所（`work/`直下でよい）を伝え、配置後に読み込む
+3. **ファイルがない場合**：会話で聞き書きする。担当者に質問し、回答をそのまま構成し直す
+4. 読み込んだ内容・聞き書きした内容を整形し、`context/`内の適切なサブフォルダに保存する（例：料金表→`context/products/`、顧客リスト→`context/customers/`）
+5. 保存したら「〈資料名〉を`context/◯◯/`に保存しました」と1件ずつ短く報告する
+6. 次の資料に進む。全件終わったら4節のスコアを算出する
+
+聞き書きで整形するときは、担当者の言葉を勝手に脚色せず、事実だけを構成し直す。憶測で数字や固有名詞を補わない。
+
+### 進め方の例（「料金表・見積ひな形」の場合）
+
+1. 「料金表の元ファイルはありますか？」と担当者に確認する
+2. あれば`work/`に置いてもらい、読み込んで`context/products/pricing.md`に整形保存する。なければ「主なプラン名と価格帯を教えてください」等、聞き書きで最低限の項目を埋める
+3. 保存後、「料金表・見積ひな形を`context/products/`に保存しました」と報告する
+4. 内容に矛盾・古そうな情報（例：終了済みのプランが残っている等）があれば、その場で指摘し担当者に確認する
+
+## 3. すべて終えたら要約をまとめる
+
+引き継ぎ資料を一通り`context/`へ保存し終えたら、要点（会社の強み・商品・料金の考え方・顧客特性・よくある質問）を`context/summary.md`に1ファイルへ要約する。これはAI秘書自身が次回セッション以降に最初に目を通す「早見表」になる。個々の資料ファイルを削除する必要はない（summary.mdはあくまで要約、原本は残す）。
+
+## 4. 自社理解度スコアを出す
+
+引き継ぎ済み資料の充足率から0〜100点を算出する。
+
+```
+スコア = round(引き継ぎ済み資料の件数 ÷ 資料カテゴリ総数 × 100)
+```
+
+算出後、次のフォーマットで報告する。
+
+```markdown
+## 自社理解度スコア：<点数>点／100点
+
+引き継ぎ済み：<件数>／<総数>
+未引き継ぎ：<まだ無いカテゴリを列挙>
+
+次に足すと効く資料：「<未引き継ぎカテゴリの中から1つ>」
+```
+
+「次に足すと効く資料」は、未引き継ぎの中から**担当業務（配属先）で使う頻度が高そうなもの**を1つ選ぶ（全部を一度に要求しない。1つに絞ることで担当者が動きやすくなる）。全カテゴリが揃っていれば「資料は揃っています。今後は内容の更新があれば都度反映してください」と伝える。
+
+## 5. 機密の扱い（再確認）
+
+- 顧客名・金額・個人情報などの機密情報は、`context/`に**保存してよい**（AI秘書が正しく業務を行うために必要）
+- ただし、それらを**外部に送る文書・メッセージ（メール・提案書・SNS投稿等）には出さない**。これは第1部のCLAUDE.md絶対ルール#3と同じ内容であり、`context/`が充実するほど誤って混入させないよう改めて意識する
+- 迷ったら「この情報は社外に出してよいか」を担当者に確認してから使う
+
+---
+Central AX Claude Code研修 教材　v1.0
+</script>
+
+<script>
+(function () {
+  'use strict';
+
+  var STORAGE_KEY = 'centralAX_aiHishoBuilder_kenshu_v1';
+
+  /* ===================== データ定義 ===================== */
+  var UNIVERSAL = [
+    { id: '/daily-schedule', desc: '予定とタスクから、今日の段取りを時刻順に組み立てる' },
+    { id: '/mtg-prep', desc: '次の会議の参加者・論点・関連資料を事前にまとめる' }
+  ];
+
+  var ROLES = {
+    keiei: { name: '経営',
+      tetsuban: [
+        { id: '/sparring', desc: '経営判断の前提や選択肢を洗い出し、反対意見も含めて壁打ちする' },
+        { id: '/weekly-report', desc: '週次の進捗・成果・課題を定点でまとめる' }
+      ],
+      next: [
+        { id: '/clip', desc: '業界動向・投資関連ニュースを継続的に収集する' },
+        { id: '/company-research', desc: '投資先・提携先候補の企業情報を整理する' }
+      ],
+      team: { name: '戦略検討チーム', flow: '論点整理 → 市場調査 → 定量分析 → 戦略骨子 → 反証レビュー' },
+      docs: [
+        { id: '事業計画・中期計画', on: true },
+        { id: '経営会議資料・議事録', on: true },
+        { id: '月次業績サマリ（PL・KPI）', on: false },
+        { id: '会社案内・沿革', on: true }
+      ]
+    },
+    eigyo: { name: '営業',
+      tetsuban: [
+        { id: '/meeting-email', desc: '商談前後のメール下書きを作成する（送信は必ず本人確認後）' },
+        { id: '/company-research', desc: '新規リード・初回商談先の企業情報を整理する' }
+      ],
+      next: [
+        { id: '/weekly-report', desc: '案件の進捗を週次でまとめる' },
+        { id: '/clip', desc: '競合・業界情報を継続的に収集する' }
+      ],
+      team: { name: '提案書チーム', flow: '顧客理解 → 競合比較 → ソリューション設計 → 原稿執筆 → 仕上げ確認' },
+      docs: [
+        { id: '標準提案資料・サービス概要', on: true },
+        { id: '価格表・見積ひな形', on: true },
+        { id: '既存顧客リスト', on: true },
+        { id: '商談議事録', on: false }
+      ]
+    },
+    marke: { name: 'マーケ',
+      tetsuban: [
+        { id: '/clip', desc: '競合・トレンド・ネタになる情報を継続的に収集する' },
+        { id: '/company-research', desc: 'ターゲット顧客・競合の情報を整理する' }
+      ],
+      next: [
+        { id: '/weekly-report', desc: '施策の進捗を週次でまとめる' }
+      ],
+      team: { name: 'コンテンツ制作チーム', flow: 'リサーチ → 構成設計 → 執筆 → 校正 → 最終確認' },
+      docs: [
+        { id: 'ブランド・トンマナガイド', on: true },
+        { id: '過去の記事・LP・投稿', on: true },
+        { id: 'ターゲット/ペルソナ定義', on: true },
+        { id: '競合・キーワードリスト', on: false }
+      ]
+    },
+    cs: { name: 'CS・サポート',
+      tetsuban: [
+        { id: '/meeting-email', desc: '問い合わせ対応・お詫び・案内メールを下書きする' },
+        { id: '/slack-digest', desc: '社内への問い合わせ・依頼を整理する' }
+      ],
+      next: [
+        { id: '/clip', desc: 'FAQ・既知の不具合情報を蓄積する' }
+      ],
+      team: { name: '問い合わせ対応チーム', flow: '一次受付 → 分類 → 回答下書き → エスカレ判定 → 最終確認' },
+      docs: [
+        { id: '製品仕様・操作マニュアル', on: true },
+        { id: 'FAQ・過去の問い合わせ', on: true },
+        { id: '返信テンプレ集', on: true },
+        { id: 'SLA・エスカレ基準', on: false }
+      ]
+    },
+    jinji: { name: '人事・採用',
+      tetsuban: [
+        { id: '/interview', desc: '求人要件・評価軸を着手前にヒアリングして整理する' },
+        { id: '/meeting-email', desc: '日程調整・オファー・お見送り連絡を下書きする' }
+      ],
+      next: [
+        { id: '/daily-log', desc: '選考状況の記録を残す' }
+      ],
+      team: { name: '候補者評価チーム', flow: '要件定義 → 書類確認 → 面接設計 → 評価まとめ → レビュー' },
+      docs: [
+        { id: '求人票・募集要項', on: true },
+        { id: '評価シート・面接基準', on: true },
+        { id: '就業規則・人事制度', on: true },
+        { id: 'カルチャーデック', on: false }
+      ]
+    },
+    keiri: { name: '経理・財務',
+      tetsuban: [
+        { id: '/daily-log', desc: '日次の処理内容を記録し、月次のたたき台にする' },
+        { id: '/clip', desc: '税制・会計基準・補助金の改正情報を蓄積する' }
+      ],
+      next: [
+        { id: '/weekly-report', desc: '資金繰りの状況を定点でまとめる' }
+      ],
+      team: { name: '月次まとめチーム', flow: '数値収集 → 分類 → サマリ作成 → 整合確認' },
+      docs: [
+        { id: '勘定科目表', on: true },
+        { id: '請求書・契約書の定型フォーマット', on: true },
+        { id: '取引先・支払先一覧', on: true },
+        { id: '月次PL・予算', on: false }
+      ]
+    },
+    bo: { name: '総務・バックオフィス',
+      tetsuban: [
+        { id: '/clip', desc: '法改正・制度変更・新ツールの情報を蓄積する' },
+        { id: '/slack-digest', desc: '社内からの問い合わせ・依頼を整理する' }
+      ],
+      next: [
+        { id: '/daily-log', desc: '対応履歴を記録する' }
+      ],
+      team: { name: 'ナレッジ整備チーム', flow: '情報収集 → 整理 → 文書化 → 整合確認' },
+      docs: [
+        { id: '社内規程・運用マニュアル', on: true },
+        { id: '契約書の定型フォーマット', on: true },
+        { id: '備品・資産台帳', on: false },
+        { id: '取引先一覧', on: false }
+      ]
+    },
+    qa: { name: '開発・QA',
+      tetsuban: [
+        { id: '/interview', desc: '仕様の曖昧な点を着手前にヒアリングして整理する' },
+        { id: '/daily-log', desc: 'コミット・PR・Issueの活動を記録する' }
+      ],
+      next: [
+        { id: '/clip', desc: '技術記事・脆弱性情報を蓄積する' }
+      ],
+      team: { name: 'テスト設計チーム', flow: '仕様理解 → 観点抽出 → ケース作成 → レビュー' },
+      docs: [
+        { id: '対象リポジトリ', on: true },
+        { id: '仕様書・要件定義', on: true },
+        { id: '既存のテスト観点表', on: true },
+        { id: '過去の不具合記録', on: false }
+      ]
+    },
+    design: { name: 'デザイナー',
+      tetsuban: [
+        { id: '/clip', desc: '参考事例・UIトレンド・競合表現を収集する' },
+        { id: '/interview', desc: '制作依頼のゴール・制約を着手前にヒアリングして整理する' }
+      ],
+      next: [
+        { id: '/weekly-report', desc: '制作の進捗を週次でまとめる' }
+      ],
+      team: { name: 'デザイン検討チーム', flow: '参考収集 → 要件整理 → 論点出し → 批評 → まとめ' },
+      docs: [
+        { id: 'ブランド・デザインガイド', on: true },
+        { id: '過去の制作物の記録', on: true },
+        { id: 'アセット・素材の索引', on: true },
+        { id: '案件ブリーフ一覧', on: false }
+      ]
+    }
+  };
+
+  var TOOLS = [
+    'Googleカレンダー', 'Gmail', 'Google Drive', 'Google スプレッドシート・ドキュメント',
+    'Slack', 'Discord', 'Notion', 'Linear', 'Chatwork',
+    'Microsoft 365（Outlook/Teams）', 'GitHub', 'Figma', 'Zoom',
+    'X（旧Twitter）', '音声通知（VOICEVOX 等）'
+  ];
+
+  var PERMS = [
+    { key: 'send_draft', label: '外部送信は下書き→許可制', desc: 'メール・Slack投稿などの外部送信は、下書きまでで止め、担当者本人の確認を経てから送信する', rec: true, on: true },
+    { key: 'autocommit', label: 'タスク完了で自動コミット', desc: '作業がひと区切りついたら自動でコミットし、いつでも前の状態に戻せるようにする', rec: true, on: true },
+    { key: 'read_auto', label: '読み取り系コマンドは自動許可', desc: 'ls・grep・catなど読み取りだけのコマンドは毎回の確認を省く', rec: true, on: true },
+    { key: 'guard_secret', label: '機密フォルダへの書き込みは毎回確認', desc: 'secrets等の機密フォルダへの書き込みは、うっかり上書きを防ぐため毎回確認する', rec: true, on: true },
+    { key: 'autopush', label: 'コミット後に自動push', desc: 'コミット後、リモートへの反映も自動で行う（push忘れを防げる一方、共有履歴に即反映される）', rec: false, on: false },
+    { key: 'web', label: 'Webアクセスを許可', desc: '検索・Webページ取得など、社外への通信を伴う操作を許可する', rec: false, on: false }
+  ];
+
+  var TEACHER = {
+    1: '<b>このあと講師が概念を説明します。</b>いま組み立てたガワを題材に、CLAUDE.mdとpermissionsの考え方を解説します。聞き終わったら②能力に進みましょう。',
+    2: '<b>このあと講師が概念を説明します。</b>いま選んだスキルとAgent Teamを題材に、自動起動の仕組みとチーム分担の考え方を解説します。聞き終わったら③中身に進みましょう。',
+    3: '<b>このあと講師が概念を説明します。</b>いま入れた資料を題材に、ストックとフローの分け方を解説します。聞き終わったら完成画面に進みましょう。'
+  };
+  var LEARN = {
+    1: 'CLAUDE.mdは、AI秘書が毎回のセッションで必ず目を通す「就業規則」です。事業内容や絶対に守るルール（日本語で答える・送信前に下書きを見せる・機密を漏らさない）をここに書いておくと、AIは毎回それに従って動きます。まずは<code>体（ガワ）</code>を用意し、次のステージで能力を、その次で中身を足していきます。',
+    2: 'スキルは「/コマンド名」で呼び出す仕事のショートカットです。SKILL.mdのdescriptionに「どんな場面で使うか」を具体的に書いておくと、その場面が来たときに自動で起動します。Gotchasは、使ってみて分かった落とし穴を書き足していく欄で、同じ失敗を繰り返さないための記録になります。まずは単発のスキルに慣れてから、複数の工程を分担するAgent Teamに進むのがおすすめです。',
+    3: '<code>context/</code>フォルダの充実度が、AI秘書の自社理解度を決めます。会社の事実は<b>ストック</b>（今の正しい状態・上書きで更新）、日々のやり取りは<b>フロー</b>（時系列で追記）として分けて置くのがコツです。この2つを混ぜると、どこが最新の正しい情報か分からなくなります。使うほど事実が増え、回答の的中率が上がっていきます。'
+  };
+
+  var MASCOT_TYPING = '<svg viewBox="0 0 44 44" width="76" height="76" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="AI秘書ビルダーのマスコットが端末に向かって作業しています">'
+    + '<ellipse cx="22" cy="40" rx="12" ry="2" fill="#000000" opacity="0.12"/>'
+    + '<rect x="3" y="7" width="38" height="24" rx="2" fill="#16233A"/>'
+    + '<rect x="3" y="7" width="38" height="5" rx="2" fill="#233150"/>'
+    + '<circle cx="7" cy="9.5" r="1" fill="#E4665A"/><circle cx="10.5" cy="9.5" r="1" fill="#E8B23C"/><circle cx="14" cy="9.5" r="1" fill="#5FAE68"/>'
+    + '<rect x="7" y="16" width="14" height="1.6" fill="#4C8DFF" opacity="0.85"/>'
+    + '<rect x="7" y="19.4" width="20" height="1.6" fill="#4FBF8A" opacity="0.75"/>'
+    + '<rect x="7" y="22.8" width="10" height="1.6" fill="#4C8DFF" opacity="0.6"/>'
+    + '<rect class="cx-cursor" x="18" y="22.8" width="1.6" height="1.6" fill="#E8E8E8"/>'
+    + '<rect x="1" y="31" width="42" height="7" rx="1" fill="#3B4A63"/>'
+    + '<g fill="#5A6B87"><rect x="4" y="33" width="2.4" height="1.6"/><rect x="7.5" y="33" width="2.4" height="1.6"/><rect x="11" y="33" width="2.4" height="1.6"/><rect x="14.5" y="33" width="2.4" height="1.6"/><rect x="18" y="33" width="2.4" height="1.6"/><rect x="21.5" y="33" width="2.4" height="1.6"/><rect x="25" y="33" width="2.4" height="1.6"/><rect x="28.5" y="33" width="2.4" height="1.6"/><rect x="32" y="33" width="2.4" height="1.6"/><rect x="35.5" y="33" width="2.4" height="1.6"/></g>'
+    + '<g class="cx-body"><rect x="13" y="12" width="18" height="14" rx="3" fill="#E08868"/><rect x="17" y="17" width="2" height="3" fill="#20242B"/><rect x="25" y="17" width="2" height="3" fill="#20242B"/>'
+    + '<g class="cx-arm-l"><rect x="9" y="24" width="4.5" height="3" rx="1" fill="#E08868"/></g><g class="cx-arm-r"><rect x="30.5" y="24" width="4.5" height="3" rx="1" fill="#E08868"/></g></g>'
+    + '</svg>';
+
+  var MASCOT_HAPPY = '<svg viewBox="0 0 44 44" width="76" height="76" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="AI秘書ビルダーのマスコットがステージクリアを喜んでいます">'
+    + '<ellipse cx="22" cy="40" rx="12" ry="2" fill="#000000" opacity="0.12"/>'
+    + '<g class="cx-spark"><rect x="4" y="10" width="2" height="2" fill="#E8B23C" transform="rotate(45 5 11)"/></g>'
+    + '<g class="cx-spark" style="animation-delay:.3s"><rect x="36" y="14" width="2" height="2" fill="#4C8DFF" transform="rotate(45 37 15)"/></g>'
+    + '<g class="cx-spark" style="animation-delay:.6s"><rect x="8" y="30" width="2" height="2" fill="#4FBF8A" transform="rotate(45 9 31)"/></g>'
+    + '<g class="cx-spark" style="animation-delay:.9s"><rect x="33" y="30" width="2" height="2" fill="#E4665A" transform="rotate(45 34 31)"/></g>'
+    + '<g class="cx-hbounce"><rect x="13" y="10" width="18" height="14" rx="3" fill="#E08868"/><rect x="17" y="14.6" width="2" height="3" fill="#20242B"/><rect x="25" y="14.6" width="2" height="3" fill="#20242B"/>'
+    + '<g class="cx-arm-lh"><rect x="6" y="6" width="4.5" height="3" rx="1" fill="#E08868"/></g><g class="cx-arm-rh"><rect x="33.5" y="6" width="4.5" height="3" rx="1" fill="#E08868"/></g></g>'
+    + '</svg>';
+
+  /* ===================== 状態管理 ===================== */
+  var state = {
+    company: '', person: '', ainame: '',
+    roles: new Set(), otherOn: false, otherText: '',
+    tools: new Set(), toolsFree: '',
+    perms: new Set(PERMS.filter(function (p) { return p.on; }).map(function (p) { return p.key; })),
+    tetsuban: new Set(), next: new Set(), teams: new Set(), docs: new Set(),
+    implemented: new Set(), downloaded: new Set(),
+    currentStage: 1
+  };
+  var lastPrompt = {};
+  var mascotMode = null;
+  var mascotTimer = null;
+
+  /* ===================== helpers ===================== */
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function rnames() { return Array.from(state.roles).map(function (k) { return ROLES[k].name; }); }
+  function otherName() { return state.otherOn && state.otherText.trim() ? state.otherText.trim() : ''; }
+  function allRoleNames() { var a = rnames(); if (otherName()) a.push(otherName()); return a; }
+  function hasRole() { return state.roles.size > 0 || !!otherName(); }
+  function mergedSkills(kind) {
+    var m = new Map();
+    state.roles.forEach(function (k) {
+      ROLES[k][kind].forEach(function (s) { if (!m.has(s.id)) m.set(s.id, s); });
+    });
+    return Array.from(m.values());
+  }
+  function mergedDocs() {
+    var m = new Map();
+    state.roles.forEach(function (k) {
+      ROLES[k].docs.forEach(function (d) { if (!m.has(d.id)) m.set(d.id, d); });
+    });
+    return Array.from(m.values());
+  }
+  function listJoin(set) { var a = Array.from(set); return a.length ? a.join('、') : '（なし）'; }
+  function toolsAll() {
+    var free = state.toolsFree.split(/[,、]/).map(function (s) { return s.trim(); }).filter(Boolean);
+    var all = Array.from(state.tools).concat(free);
+    return all.length ? all.join('、') : '（未選択）';
+  }
+  function permLine() {
+    var base = '破壊系コマンド・機密ファイル読取は deny（固定）';
+    var sel = PERMS.filter(function (p) { return state.perms.has(p.key); }).map(function (p) { return p.label; });
+    return base + (sel.length ? '／' + sel.join('／') : '');
+  }
+  function teamLine() {
+    var ts = Array.from(state.teams).map(function (k) { return ROLES[k].name + '：' + ROLES[k].team.name + '（' + ROLES[k].team.flow + '）'; });
+    return ts.length ? ts.join(' / ') : '今回は作らない（まずは単発スキルから）';
+  }
+  function lastScoreText() {
+    var docs = mergedDocs();
+    if (!docs.length) return '—';
+    var checked = docs.filter(function (d) { return state.docs.has(d.id); }).length;
+    return Math.round(checked / docs.length * 100) + '点／100点';
+  }
+
+  /* ===================== render: role / tool / perm grids ===================== */
+  function renderRoleGrid() {
+    var grid = document.getElementById('roleGrid');
+    grid.innerHTML = '';
+    Object.keys(ROLES).forEach(function (k) {
+      var r = ROLES[k];
+      var cell = document.createElement('label');
+      cell.className = 'tool-cell';
+      cell.innerHTML = '<input type="checkbox" value="' + k + '"><span>' + esc(r.name) + '</span>';
+      cell.querySelector('input').addEventListener('change', function (e) {
+        if (e.target.checked) { state.roles.add(k); } else { state.roles.delete(k); }
+        cell.classList.toggle('checked', e.target.checked);
+        onRoleChange();
+      });
+      grid.appendChild(cell);
+    });
+    var otherCell = document.createElement('label');
+    otherCell.className = 'tool-cell';
+    otherCell.innerHTML = '<input type="checkbox" id="roleOtherToggle"><span>その他</span>';
+    otherCell.querySelector('input').addEventListener('change', function (e) {
+      state.otherOn = e.target.checked;
+      otherCell.classList.toggle('checked', state.otherOn);
+      document.getElementById('roleOtherBox').style.display = state.otherOn ? 'block' : 'none';
+      if (state.otherOn) {
+        document.getElementById('roleOtherInput').focus();
+        say('その他の役割を自由に書いてください（例：税理士・カスタマーサクセス）');
+      } else {
+        state.otherText = '';
+        document.getElementById('roleOtherInput').value = '';
+      }
+      onRoleChange();
+    });
+    grid.appendChild(otherCell);
+  }
+
+  function onRoleChange() {
+    hop();
+    applyRoleDefaults();
+    hideStageWarn();
+    renderStep2();
+    renderStep3();
+    say(hasRole() ? '役割を選ぶと、おすすめのスキルが変わります' : '先に①で役割を選んでください（複数選べます）');
+    saveState();
+  }
+
+  function applyRoleDefaults() {
+    var ts = new Set(), dc = new Set();
+    state.teams = new Set();
+    state.roles.forEach(function (k) {
+      var r = ROLES[k];
+      r.tetsuban.forEach(function (s) { ts.add(s.id); });
+      r.docs.filter(function (d) { return d.on; }).forEach(function (d) { dc.add(d.id); });
+      state.teams.add(k);
+    });
+    state.tetsuban = ts;
+    state.next = new Set();
+    state.docs = dc;
+  }
+
+  function renderToolGrid() {
+    var grid = document.getElementById('toolGrid');
+    grid.innerHTML = '';
+    TOOLS.forEach(function (t) {
+      var cell = document.createElement('label');
+      cell.className = 'tool-cell';
+      cell.innerHTML = '<input type="checkbox" value="' + esc(t) + '"><span>' + esc(t) + '</span>';
+      cell.querySelector('input').addEventListener('change', function (e) {
+        if (e.target.checked) { state.tools.add(t); } else { state.tools.delete(t); }
+        cell.classList.toggle('checked', e.target.checked);
+        saveState();
+      });
+      grid.appendChild(cell);
+    });
+  }
+
+  function renderPermList() {
+    var list = document.getElementById('permList');
+    list.innerHTML = '';
+    PERMS.forEach(function (p) {
+      var row = document.createElement('label');
+      row.className = 'skill-row' + (state.perms.has(p.key) ? ' checked' : '');
+      row.innerHTML = '<input type="checkbox" ' + (state.perms.has(p.key) ? 'checked' : '') + '>'
+        + '<span class="choice-text"><span class="skill-title">' + esc(p.label) + (p.rec ? ' <span class="badge-osusume">推奨</span>' : '') + '</span>'
+        + '<span class="skill-sub">' + esc(p.desc) + '</span></span>';
+      row.querySelector('input').addEventListener('change', function (e) {
+        if (e.target.checked) { state.perms.add(p.key); } else { state.perms.delete(p.key); }
+        row.classList.toggle('checked', e.target.checked);
+        saveState();
+      });
+      list.appendChild(row);
+    });
+  }
+
+  function syncRoleCheckboxes() {
+    document.querySelectorAll('#roleGrid input[type=checkbox]').forEach(function (inp) {
+      var checked;
+      if (inp.id === 'roleOtherToggle') { checked = state.otherOn; } else { checked = state.roles.has(inp.value); }
+      inp.checked = checked;
+      inp.closest('.tool-cell').classList.toggle('checked', checked);
+    });
+    document.getElementById('roleOtherBox').style.display = state.otherOn ? 'block' : 'none';
+    document.getElementById('roleOtherInput').value = state.otherText;
+  }
+  function syncToolCheckboxes() {
+    document.querySelectorAll('#toolGrid input[type=checkbox]').forEach(function (inp) {
+      var checked = state.tools.has(inp.value);
+      inp.checked = checked;
+      inp.closest('.tool-cell').classList.toggle('checked', checked);
+    });
+    document.getElementById('toolsFree').value = state.toolsFree;
+  }
+  function syncPermCheckboxes() {
+    document.querySelectorAll('#permList input[type=checkbox]').forEach(function (inp, i) {
+      var p = PERMS[i];
+      var checked = state.perms.has(p.key);
+      inp.checked = checked;
+      inp.closest('.skill-row').classList.toggle('checked', checked);
+    });
+  }
+
+  /* ===================== render: STAGE2 / STAGE3 ===================== */
+  function renderStep2() {
+    var box = document.getElementById('step2Body');
+    if (!hasRole()) {
+      box.innerHTML = '<p class="hint">先に①で役割を選んでください（複数選択可・「その他」の自由入力も可）。</p>';
+      return;
+    }
+    var h = '';
+    h += '<div class="group"><div class="group-label">ユニバーサル・スキル（全員固定）</div><div class="group-hr"></div><div class="skill-list">';
+    UNIVERSAL.forEach(function (s) {
+      h += '<div class="skill-row fixed"><input type="checkbox" checked disabled><span class="choice-text"><span class="skill-title"><code>' + esc(s.id) + '</code></span><span class="skill-sub">' + esc(s.desc) + '</span></span></div>';
+    });
+    h += '</div></div>';
+
+    h += '<div class="group"><div class="group-label">鉄板スキル（' + esc(rnames().join('・')) + 'のおすすめ）</div><div class="group-hr"></div><div class="skill-list">';
+    mergedSkills('tetsuban').forEach(function (s) {
+      var checked = state.tetsuban.has(s.id);
+      h += '<label class="skill-row' + (checked ? ' checked' : '') + '"><input type="checkbox" data-skill="' + esc(s.id) + '" data-kind="tetsuban" ' + (checked ? 'checked' : '') + '><span class="choice-text"><span class="skill-title"><code>' + esc(s.id) + '</code> <span class="badge-osusume">鉄板</span></span><span class="skill-sub">' + esc(s.desc) + '</span></span></label>';
+    });
+    h += '</div></div>';
+
+    var tIds = {};
+    mergedSkills('tetsuban').forEach(function (s) { tIds[s.id] = true; });
+    var nextList = mergedSkills('next').filter(function (s) { return !tIds[s.id]; });
+    if (nextList.length) {
+      h += '<div class="group"><div class="group-label">次に足す（慣れてきたら）</div><div class="group-hr"></div><div class="skill-list">';
+      nextList.forEach(function (s) {
+        var checked = state.next.has(s.id);
+        h += '<label class="skill-row' + (checked ? ' checked' : '') + '"><input type="checkbox" data-skill="' + esc(s.id) + '" data-kind="next" ' + (checked ? 'checked' : '') + '><span class="choice-text"><span class="skill-title"><code>' + esc(s.id) + '</code></span><span class="skill-sub">' + esc(s.desc) + '</span></span></label>';
+      });
+      h += '</div></div>';
+    }
+
+    h += '<div class="group"><div class="group-label">Agent Team（役割ごとの作業チーム）</div><div class="group-hr"></div><div class="skill-list">';
+    Array.from(state.roles).forEach(function (k) {
+      var r = ROLES[k];
+      var checked = state.teams.has(k);
+      h += '<label class="skill-row' + (checked ? ' checked' : '') + '"><input type="checkbox" data-team="' + k + '" ' + (checked ? 'checked' : '') + '><span class="choice-text"><span class="skill-title">【' + esc(r.name) + '】' + esc(r.team.name) + '</span><span class="skill-sub">分担：' + esc(r.team.flow) + '</span></span></label>';
+    });
+    h += '</div></div>';
+
+    if (otherName()) {
+      h += '<div class="group"><div class="group-label">その他の役割</div><div class="group-hr"></div><div class="skill-row fixed"><input type="checkbox" checked disabled><span class="choice-text"><span class="skill-title">「' + esc(otherName()) + '」</span><span class="skill-sub">専用カタログが無いので、ユニバーサル・スキルから始めて会話で鉄板スキルを足していきます</span></span></div></div>';
+    }
+
+    box.innerHTML = h;
+    box.querySelectorAll('[data-skill]').forEach(function (cb) {
+      cb.addEventListener('change', function (e) {
+        var id = e.target.dataset.skill, kind = e.target.dataset.kind;
+        var set = kind === 'tetsuban' ? state.tetsuban : state.next;
+        if (e.target.checked) { set.add(id); } else { set.delete(id); }
+        e.target.closest('.skill-row').classList.toggle('checked', e.target.checked);
+        saveState();
+      });
+    });
+    box.querySelectorAll('[data-team]').forEach(function (cb) {
+      cb.addEventListener('change', function (e) {
+        var k = e.target.dataset.team;
+        if (e.target.checked) { state.teams.add(k); } else { state.teams.delete(k); }
+        e.target.closest('.skill-row').classList.toggle('checked', e.target.checked);
+        saveState();
+      });
+    });
+  }
+
+  function renderStep3() {
+    var box = document.getElementById('step3Body');
+    if (!hasRole()) {
+      box.innerHTML = '<p class="hint">先に①で役割を選んでください（複数選択可・「その他」の自由入力も可）。</p>';
+      updateScore();
+      return;
+    }
+    var docs = mergedDocs();
+    var h = '<div class="doc-list">';
+    if (docs.length) {
+      docs.forEach(function (d) {
+        var checked = state.docs.has(d.id);
+        h += '<label class="doc-row' + (checked ? ' checked' : '') + '"><input type="checkbox" data-doc="' + esc(d.id) + '" ' + (checked ? 'checked' : '') + '><span class="doc-title">' + esc(d.id) + '</span></label>';
+      });
+    } else {
+      h += '<div class="doc-row fixed"><input type="checkbox" checked disabled><span class="doc-title">会社の基本資料（事業概要・主要業務の手順・主要顧客）</span></div>';
+    }
+    h += '</div>';
+    box.innerHTML = h;
+    box.querySelectorAll('[data-doc]').forEach(function (cb) {
+      cb.addEventListener('change', function (e) {
+        var id = e.target.dataset.doc;
+        if (e.target.checked) { state.docs.add(id); } else { state.docs.delete(id); }
+        e.target.closest('.doc-row').classList.toggle('checked', e.target.checked);
+        updateScore();
+        saveState();
+      });
+    });
+    updateScore();
+  }
+
+  function updateScore() {
+    var docs = mergedDocs();
+    var scoreEl = document.getElementById('scoreNum');
+    var titleEl = document.getElementById('scoreTitle');
+    var adviceEl = document.getElementById('scoreAdvice');
+    if (!docs.length) {
+      scoreEl.innerHTML = '0<span> / 100点</span>';
+      titleEl.textContent = '役割を選ぶと資料の候補が表示されます';
+      adviceEl.textContent = '先に①で役割を選んでください。';
+      return;
+    }
+    var checkedCount = docs.filter(function (d) { return state.docs.has(d.id); }).length;
+    var score = Math.round(checkedCount / docs.length * 100);
+    scoreEl.innerHTML = score + '<span> / 100点</span>';
+    if (score === 0) { titleEl.textContent = 'まだ資料が入っていません'; }
+    else if (score < 50) { titleEl.textContent = 'まだ手探りで会話するレベルです'; }
+    else if (score < 100) { titleEl.textContent = 'だいぶ自社のことがわかってきました'; }
+    else { titleEl.textContent = '主要な資料は揃っています'; }
+    var missing = docs.filter(function (d) { return !state.docs.has(d.id); });
+    if (!missing.length) {
+      adviceEl.textContent = '十分な資料が揃っています。あとは実際の運用で使いながら精度を上げましょう。';
+    } else {
+      var next = missing.slice(0, 2).map(function (d) { return d.id; });
+      adviceEl.textContent = '次に足すと効くのは「' + next.join('」「') + '」です。';
+    }
+  }
+
+  /* ===================== プロンプト生成 ===================== */
+  function buildPrompt1() {
+    var company = state.company.trim();
+    var person = state.person.trim();
+    var an = state.ainame.trim();
+    var companyLine = company || '（未設定・最初のセッションで確認する）';
+    var personLine = person || '（未設定・最初のセッションで確認する）';
+    var who = (person && company) ? (person + 'さん（' + company + '）') : (person || company || 'ユーザー');
+    var nameLine = an || '（任意・付けたい場合のみ後で命名する）';
+    var nameInstr = an
+      ? 'CLAUDE.mdの冒頭に、「' + an + '」という名前のAI秘書として' + who + 'を支援する旨を明記してください。'
+      : 'CLAUDE.mdの冒頭に、' + who + 'を支援するAI秘書である旨を明記してください（名前は任意。付けたい場合のみ後で命名）。';
+    var lines = [];
+    lines.push('【第1部 ガワ：CLAUDE.mdと土台】このファイルの下に同梱した第1部の手順書に沿って進めてください。応答は必ず日本語で行ってください。');
+    lines.push('');
+    lines.push('- 会社名：' + companyLine);
+    lines.push('- あなた（担当者）：' + personLine);
+    lines.push('- AI秘書の呼び名：' + nameLine);
+    lines.push('- 役割：' + (allRoleNames().join('・') || '（未選択）'));
+    lines.push('- ' + nameInstr);
+    lines.push('- フォルダ構成（context/・work/・.claude/）とCLAUDE.mdを作成してください。CLAUDE.mdの絶対ルールには「日本語で応答」「対外送信は下書き→本人許可の順」「機密情報は外部に出さない」を必ず含めてください。');
+    lines.push('- 連携するツール：' + toolsAll() + '（優先順位：公式コネクタ → CLI → 自作MCP）');
+    lines.push('- 権限方針：' + permLine());
+    lines.push('- 権限設定の前に、付録のセキュリティ最低限（APIキーの置き場所・.gitignore）を確認してください');
+    lines.push('');
+    lines.push('→ ここまでで「おはよう」と話しかけると /daily-schedule が動く"ガワ"が完成します。');
+    return lines.join('\n');
+  }
+
+  function buildPrompt2() {
+    var lines = [];
+    lines.push('【第2部 能力：スキルとAgent Team】このファイルの下に同梱した第2部の手順書に沿って、以下を作成してください。応答は日本語で行ってください。');
+    lines.push('');
+    lines.push('- 対象の役割：' + (allRoleNames().join('・') || '（未選択）'));
+    lines.push('- ユニバーサル・スキル（全員固定）：' + UNIVERSAL.map(function (s) { return s.id; }).join('、'));
+    lines.push('- 鉄板スキル：' + listJoin(state.tetsuban));
+    lines.push('- 次に足すスキル：' + listJoin(state.next));
+    lines.push('- Agent Team：' + teamLine());
+    if (otherName()) {
+      lines.push('- その他の役割「' + otherName() + '」：専用カタログが無いので、ユニバーサル・スキルから始めて会話で鉄板スキルを決めてください');
+    }
+    lines.push('- 各スキルのSKILL.mdにはGotchas欄を用意し、descriptionで自動起動する形にしてください');
+    return lines.join('\n');
+  }
+
+  function buildPrompt3() {
+    var cats = rnames();
+    var ref = cats.length ? ('選んだ役割（' + cats.join('・') + '）の業務でよく使う資料を優先し、') : '';
+    var lines = [];
+    lines.push('【第3部 中身：コンテキスト充実】このファイルの下に同梱した第3部の手順書に沿って、context/ を充実させてください。応答は日本語で行ってください。');
+    lines.push('');
+    lines.push('- 先に入れる会社資料：' + listJoin(state.docs));
+    lines.push('- ' + ref + '資料の所在を確認 → 読み込みまたは聞き書き → context/へ保存、を1件ずつ進めてください');
+    if (otherName()) {
+      lines.push('- その他の役割「' + otherName() + '」は専用カタログが無いので、業務の実態を会話でヒアリングしながらcontext/を埋めてください');
+    }
+    lines.push('- 最後に自社理解度スコア（現在：' + lastScoreText() + '）を算出し、次に足すと効く資料を提案してください');
+    lines.push('- 機密情報（顧客名・金額・個人情報）はcontext/に保存してよいが、外部に送る文書・メッセージには一切出さないでください');
+    return lines.join('\n');
+  }
+
+  /* ===================== 実装（プロンプト生成・結果ブロック） ===================== */
+  function renderResultBlock(n) {
+    var names = { 1: 'ガワ', 2: '能力', 3: '中身' };
+    var host = document.getElementById('result' + n);
+    var dlLabel = state.downloaded.has(n) ? 'もう一度ダウンロードする' : ('第' + n + '部セット（手順＋あなたの決定）をダウンロード');
+    var h = '<div class="result-block">'
+      + '<div class="rb-head">第' + n + '部　' + names[n] + '　組み立て完了</div>'
+      + '<p class="rb-lead">手順書とあなたの決定を1つのファイルにまとめました。ダウンロードしてClaude Codeに渡してください。</p>'
+      + '<div class="btn-row">'
+      + '<button type="button" class="btn-primary" onclick="AISHO.downloadBundle(' + n + ')">' + dlLabel + '</button>'
+      + '<button type="button" class="btn-secondary" onclick="AISHO.copyPromptOnly(' + n + ')">プロンプトだけコピーする</button>'
+      + '<span class="copy-feedback" id="feedback' + n + '">コピーしました</span>'
+      + '</div>'
+      + '<div class="teacher-panel">' + TEACHER[n] + '<details class="learn"><summary>自分で読む（90秒・講師がいなくてもOK）</summary><div class="learn-body">' + LEARN[n] + '</div></details></div>'
+      + '</div>';
+    host.innerHTML = h;
+  }
+
+  function updateProgress() {
+    document.getElementById('progressNum').textContent = state.implemented.size;
+    [1, 2, 3].forEach(function (n) {
+      var btn = document.querySelector('.stage-nav button[data-stage="' + n + '"]');
+      if (btn) { btn.classList.toggle('done', state.implemented.has(n)); }
+      updateDLMark(n);
+    });
+  }
+  function updateDLMark(n) {
+    var mark = document.getElementById('dlMark' + n);
+    if (mark) { mark.style.display = state.downloaded.has(n) ? 'block' : 'none'; }
+  }
+
+  function impl(n) {
+    if (!hasRole()) { showStageWarn('先に①で役割を選んでください（複数選べます）。'); return; }
+    var prompt = n === 1 ? buildPrompt1() : n === 2 ? buildPrompt2() : buildPrompt3();
+    lastPrompt[n] = prompt;
+    document.getElementById('output' + n).value = prompt;
+    state.implemented.add(n);
+    renderResultBlock(n);
+    updateProgress();
+    hop();
+    setMascot('happy');
+    clearTimeout(mascotTimer);
+    mascotTimer = setTimeout(function () { setMascot('typing'); }, 2200);
+    if (state.implemented.size === 3) {
+      say('3つのステージが揃いました。下の「完成画面へ」から進みましょう');
+    } else {
+      say('第' + n + '部が組み上がりました。DLしてClaude Codeに渡してみましょう');
+    }
+    saveState();
+    document.getElementById('result' + n).scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  function downloadBundle(n) {
+    var prompt = lastPrompt[n] || (n === 1 ? buildPrompt1() : n === 2 ? buildPrompt2() : buildPrompt3());
+    var guideEl = document.getElementById('guideDoc' + n);
+    var guide = guideEl ? guideEl.textContent.trim() : '（手順ファイルが見つかりませんでした）';
+    var partNames = { 1: '第1部_ガワ', 2: '第2部_能力', 3: '第3部_中身' };
+    var body = '<!-- あなたの決定（AI秘書ビルダー生成） -->\n' + prompt + '\n\n---\n\n<!-- ' + partNames[n] + ' 手順（構築指示書・同梱） -->\n' + guide;
+    var blob = new Blob([body], { type: 'text/markdown;charset=utf-8' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = partNames[n] + '_セット.md';
+    document.body.appendChild(a); a.click(); a.remove();
+    state.downloaded.add(n);
+    updateDLMark(n);
+    renderResultBlock(n);
+    saveState();
+  }
+
+  function copyText(text, feedbackEl) {
+    function done() {
+      if (feedbackEl) {
+        feedbackEl.classList.add('show');
+        setTimeout(function () { feedbackEl.classList.remove('show'); }, 1600);
+      }
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done).catch(function () { fallbackCopy(text); done(); });
+    } else {
+      fallbackCopy(text); done();
+    }
+  }
+  function fallbackCopy(text) {
+    var ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    try { document.execCommand('copy'); } catch (e) { /* noop */ }
+    document.body.removeChild(ta);
+  }
+  function copyPromptOnly(n) {
+    var text = lastPrompt[n] || document.getElementById('output' + n).value;
+    copyText(text, document.getElementById('feedback' + n));
+  }
+
+  /* ===================== ナビゲーション ===================== */
+  function showStageWarn(msg) {
+    var el = document.getElementById('stageWarn');
+    el.textContent = msg;
+    el.classList.add('show');
+  }
+  function hideStageWarn() {
+    document.getElementById('stageWarn').classList.remove('show');
+  }
+
+  function go(n) {
+    n = Number(n);
+    if ((n === 2 || n === 3) && !hasRole()) {
+      showStageWarn('先に①で役割を選んでください（複数選択可）。');
+      return;
+    }
+    hideStageWarn();
+    document.querySelectorAll('.stage-panel').forEach(function (p) { p.classList.remove('active'); });
+    document.getElementById('stage-' + n).classList.add('active');
+    document.querySelectorAll('.stage-nav button').forEach(function (b) {
+      b.classList.toggle('active', Number(b.dataset.stage) === n);
+    });
+    document.getElementById('mainFooter').style.display = '';
+    state.currentStage = n;
+    setMascot('typing');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    saveState();
+  }
+
+  function goComplete() {
+    if (state.implemented.size < 3) {
+      showStageWarn('①②③をすべて組み立てると、完成画面に進めます。');
+      return;
+    }
+    hideStageWarn();
+    renderClear();
+    document.querySelectorAll('.stage-panel').forEach(function (p) { p.classList.remove('active'); });
+    document.getElementById('stage-4').classList.add('active');
+    document.getElementById('mainFooter').style.display = 'none';
+    setMascot('happy');
+    say('AI秘書の組み立てが完成しました。おつかれさまでした');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    state.currentStage = 4;
+    saveState();
+  }
+
+  function renderClear() {
+    var box = document.getElementById('stage-4');
+    var company = esc(state.company.trim() || 'あなたの会社');
+    var person = esc(state.person.trim() || 'あなた');
+    var aiName = state.ainame.trim() ? esc(state.ainame.trim()) : 'AI秘書';
+    var roles = esc(allRoleNames().join('・') || '—');
+    var h = '';
+    h += '<div class="clear-wrap"><div class="stamp">完成</div>'
+      + '<h2 class="clear-title">AI秘書「' + aiName + '」の組み立てが完了しました</h2>'
+      + '<p class="clear-sub">' + person + '（' + company + '）専用 ／ 役割：' + roles + '</p></div>';
+    h += '<div class="clear-line"></div>';
+    h += '<dl class="clear-recap">'
+      + '<dt>① ガワ</dt><dd>CLAUDE.md・フォルダ構成・権限の土台</dd>'
+      + '<dt>② 能力</dt><dd>ユニバーサル・スキル＋役割の鉄板スキル・Agent Team</dd>'
+      + '<dt>③ 中身</dt><dd>context/ に会社の事実（自社理解度スコア：' + lastScoreText() + '）</dd>'
+      + '</dl>';
+    h += '<p style="text-align:center;font-family:var(--font-sans);color:var(--sub);font-size:14px;">Claude Codeで話しかける、最初の一言は</p>';
+    h += '<div style="text-align:center;"><span class="first-word">おはよう</span></div>';
+    h += '<footer style="margin-top:48px;">'
+      + '<div class="footer-kicker">GO FURTHER</div>'
+      + '<h3>もっと本格的に始めたい方へ</h3>'
+      + '<div class="cmd-block">claude plugin marketplace add JunP1ayer/claude-plugins<span class="arrow">→</span>/first-setup</div>'
+      + '<p class="note">これは Central AX Claude Code研修で配布している教材です。</p>'
+      + '</footer>';
+    h += '<div class="stage-foot"><button type="button" onclick="AISHO.go(1)">◀ 見直す</button><button type="button" class="reset-link" onclick="AISHO.resetAll()">最初からやり直す（入力内容をすべて削除）</button></div>';
+    box.innerHTML = h;
+  }
+
+  /* ===================== マスコット ===================== */
+  function setMascot(mode) {
+    if (mode === mascotMode) return;
+    mascotMode = mode;
+    document.getElementById('mascotSlot').innerHTML = mode === 'happy' ? MASCOT_HAPPY : MASCOT_TYPING;
+  }
+  function hop() {
+    var col = document.getElementById('mascotCol');
+    col.classList.remove('hop'); void col.offsetWidth; col.classList.add('hop');
+  }
+  function say(msg) {
+    var b = document.getElementById('bubble');
+    b.textContent = msg;
+    b.classList.remove('pulse'); void b.offsetWidth; b.classList.add('pulse');
+  }
+
+  /* ===================== resume banner / reset ===================== */
+  function closeResumeBanner() { document.getElementById('resumeBanner').style.display = 'none'; }
+  function hasAnyProgress() {
+    return !!(state.company || state.person || state.ainame || state.roles.size || state.otherOn
+      || state.tools.size || state.toolsFree || state.implemented.size || state.downloaded.size);
+  }
+  function resetAll() {
+    if (!window.confirm('入力した内容・ダウンロード履歴はすべて消えます。最初からやり直しますか？')) return;
+    try { localStorage.removeItem(STORAGE_KEY); } catch (e) { /* noop */ }
+    location.reload();
+  }
+
+  /* ===================== 永続化 ===================== */
+  function saveState() {
+    try {
+      var data = {
+        company: state.company, person: state.person, ainame: state.ainame,
+        roles: Array.from(state.roles),
+        otherOn: state.otherOn, otherText: state.otherText,
+        tools: Array.from(state.tools), toolsFree: state.toolsFree,
+        perms: Array.from(state.perms),
+        tetsuban: Array.from(state.tetsuban),
+        next: Array.from(state.next),
+        teams: Array.from(state.teams),
+        docs: Array.from(state.docs),
+        implemented: Array.from(state.implemented),
+        downloaded: Array.from(state.downloaded),
+        currentStage: state.currentStage,
+        out: { 1: lastPrompt[1] || '', 2: lastPrompt[2] || '', 3: lastPrompt[3] || '' }
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    } catch (e) { /* localStorage unavailable, ignore */ }
+  }
+
+  function loadState() {
+    var raw;
+    try { raw = localStorage.getItem(STORAGE_KEY); } catch (e) { raw = null; }
+    if (!raw) return false;
+    var data;
+    try { data = JSON.parse(raw); } catch (e) { return false; }
+    if (!data) return false;
+
+    state.company = data.company || ''; state.person = data.person || ''; state.ainame = data.ainame || '';
+    document.getElementById('company').value = state.company;
+    document.getElementById('personName').value = state.person;
+    document.getElementById('aiName').value = state.ainame;
+
+    state.roles = new Set((data.roles || []).filter(function (k) { return ROLES[k]; }));
+    state.otherOn = !!data.otherOn; state.otherText = data.otherText || '';
+    state.tools = new Set(data.tools || []);
+    state.toolsFree = data.toolsFree || '';
+    if (data.perms) { state.perms = new Set(data.perms); }
+    state.tetsuban = new Set(data.tetsuban || []);
+    state.next = new Set(data.next || []);
+    state.teams = new Set(data.teams || []);
+    state.docs = new Set(data.docs || []);
+    state.implemented = new Set((data.implemented || []).map(Number));
+    state.downloaded = new Set((data.downloaded || []).map(Number));
+    state.currentStage = data.currentStage || 1;
+    if (data.out) {
+      [1, 2, 3].forEach(function (n) { if (data.out[n]) { lastPrompt[n] = data.out[n]; } });
+    }
+    return true;
+  }
+
+  /* ===================== 初期化 ===================== */
+  function wireBasicInputs() {
+    var map = { company: 'company', personName: 'person', aiName: 'ainame' };
+    Object.keys(map).forEach(function (id) {
+      document.getElementById(id).addEventListener('input', function (e) {
+        state[map[id]] = e.target.value;
+        saveState();
+      });
+    });
+    document.getElementById('toolsFree').addEventListener('input', function (e) {
+      state.toolsFree = e.target.value; saveState();
+    });
+    document.getElementById('roleOtherInput').addEventListener('input', function (e) {
+      state.otherText = e.target.value; renderStep2(); renderStep3(); saveState();
+    });
+  }
+
+  renderRoleGrid();
+  renderToolGrid();
+  renderPermList();
+  wireBasicInputs();
+
+  var restored = loadState();
+  syncRoleCheckboxes();
+  syncToolCheckboxes();
+  syncPermCheckboxes();
+  renderStep2();
+  renderStep3();
+  [1, 2, 3].forEach(function (n) {
+    if (lastPrompt[n]) { document.getElementById('output' + n).value = lastPrompt[n]; }
+    if (state.implemented.has(n)) { renderResultBlock(n); }
+  });
+  updateProgress();
+  setMascot('typing');
+  if (state.currentStage === 4 && state.implemented.size === 3) {
+    goComplete();
+  } else {
+    go(state.currentStage && state.currentStage !== 4 ? state.currentStage : 1);
+  }
+  if (restored && hasAnyProgress()) {
+    document.getElementById('resumeBanner').style.display = 'flex';
+    say('前回の続きから復元しました');
+  }
+
+  /* 動的に生成するボタンのonclickから呼べるよう公開する */
+  window.AISHO = {
+    go: go, goComplete: goComplete, impl: impl,
+    downloadBundle: downloadBundle, copyPromptOnly: copyPromptOnly,
+    resetAll: resetAll, closeResumeBanner: closeResumeBanner
+  };
+  window.go = go; window.goComplete = goComplete; window.impl = impl;
+  window.resetAll = resetAll; window.closeResumeBanner = closeResumeBanner;
+})();
+</script>
+</body>
+</html>
