@@ -118,7 +118,7 @@
     align-items: center;
     gap: 8px;
   }
-  .mascot-col svg { display: block; width: 76px; height: auto; overflow: visible; }
+  .mascot-col svg { display: block; width: 76px; height: auto; overflow: visible; image-rendering: pixelated; shape-rendering: crispEdges; }
   .mascot-col.hop svg { animation: mascotHop .5s ease; }
   @keyframes mascotHop {
     0% { transform: translateY(0); }
@@ -137,6 +137,13 @@
     line-height: 1.6;
     text-align: left;
     max-width: 150px;
+  }
+  .bubble .bubble-name {
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    color: var(--blue);
+    font-weight: 700;
+    margin-bottom: 4px;
   }
   .bubble.pulse { animation: bubblePulse .3s ease; }
   @keyframes bubblePulse {
@@ -726,6 +733,7 @@
     .mascot-col { align-self: flex-end; width: 64px; flex: 0 0 auto; margin-top: -16px; }
     .mascot-col svg { width: 56px; }
     .bubble { max-width: 170px; font-size: 10.5px; padding: 6px 9px; }
+    .bubble .bubble-name { font-size: 9px; }
     .result-block { padding: 18px 16px; }
     .clear-recap { grid-template-columns: 1fr; }
     .score-num { font-size: 52px; }
@@ -747,7 +755,10 @@
       </div>
       <div class="mascot-col" id="mascotCol">
         <div id="mascotSlot"></div>
-        <div class="bubble" id="bubble">会社名とお名前を入れたら、まず役割を選んでみてください（複数選べます）。</div>
+        <div class="bubble" id="bubble">
+          <div class="bubble-name">ナビゲーター：クロド</div>
+          <div id="bubbleText">会社名とお名前を入れたら、まず役割を選んでみてほしいのだ（複数選べるのだ）。</div>
+        </div>
       </div>
     </div>
     <div class="brand-row">
@@ -1488,30 +1499,35 @@ Central AX Claude Code研修 教材　v1.1
     3: '<code>context/</code>フォルダの充実度が、AI秘書の自社理解度を決めます。会社の事実は<b>ストック</b>（今の正しい状態・上書きで更新）、日々のやり取りは<b>フロー</b>（時系列で追記）として分けて置くのがコツです。この2つを混ぜると、どこが最新の正しい情報か分からなくなります。使うほど事実が増え、回答の的中率が上がっていきます。'
   };
 
-  var MASCOT_TYPING = '<svg viewBox="0 0 44 44" width="76" height="76" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="AI秘書ビルダーのマスコットが端末に向かって作業しています">'
-    + '<ellipse cx="22" cy="40" rx="12" ry="2" fill="#000000" opacity="0.12"/>'
-    + '<rect x="3" y="7" width="38" height="24" rx="2" fill="#16233A"/>'
-    + '<rect x="3" y="7" width="38" height="5" rx="2" fill="#233150"/>'
-    + '<circle cx="7" cy="9.5" r="1" fill="#E4665A"/><circle cx="10.5" cy="9.5" r="1" fill="#E8B23C"/><circle cx="14" cy="9.5" r="1" fill="#5FAE68"/>'
-    + '<rect x="7" y="16" width="14" height="1.6" fill="#4C8DFF" opacity="0.85"/>'
-    + '<rect x="7" y="19.4" width="20" height="1.6" fill="#4FBF8A" opacity="0.75"/>'
-    + '<rect x="7" y="22.8" width="10" height="1.6" fill="#4C8DFF" opacity="0.6"/>'
-    + '<rect class="cx-cursor" x="18" y="22.8" width="1.6" height="1.6" fill="#E8E8E8"/>'
-    + '<rect x="1" y="31" width="42" height="7" rx="1" fill="#3B4A63"/>'
-    + '<g fill="#5A6B87"><rect x="4" y="33" width="2.4" height="1.6"/><rect x="7.5" y="33" width="2.4" height="1.6"/><rect x="11" y="33" width="2.4" height="1.6"/><rect x="14.5" y="33" width="2.4" height="1.6"/><rect x="18" y="33" width="2.4" height="1.6"/><rect x="21.5" y="33" width="2.4" height="1.6"/><rect x="25" y="33" width="2.4" height="1.6"/><rect x="28.5" y="33" width="2.4" height="1.6"/><rect x="32" y="33" width="2.4" height="1.6"/><rect x="35.5" y="33" width="2.4" height="1.6"/></g>'
-    + '<g class="cx-body"><rect x="13" y="12" width="18" height="14" rx="3" fill="#E08868"/><rect x="17" y="17" width="2" height="3" fill="#20242B"/><rect x="25" y="17" width="2" height="3" fill="#20242B"/>'
-    + '<g class="cx-arm-l"><rect x="9" y="24" width="4.5" height="3" rx="1" fill="#E08868"/></g><g class="cx-arm-r"><rect x="30.5" y="24" width="4.5" height="3" rx="1" fill="#E08868"/></g></g>'
-    + '</svg>';
-
-  var MASCOT_HAPPY = '<svg viewBox="0 0 44 44" width="76" height="76" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="AI秘書ビルダーのマスコットがステージクリアを喜んでいます">'
-    + '<ellipse cx="22" cy="40" rx="12" ry="2" fill="#000000" opacity="0.12"/>'
-    + '<g class="cx-spark"><rect x="4" y="10" width="2" height="2" fill="#E8B23C" transform="rotate(45 5 11)"/></g>'
-    + '<g class="cx-spark" style="animation-delay:.3s"><rect x="36" y="14" width="2" height="2" fill="#4C8DFF" transform="rotate(45 37 15)"/></g>'
-    + '<g class="cx-spark" style="animation-delay:.6s"><rect x="8" y="30" width="2" height="2" fill="#4FBF8A" transform="rotate(45 9 31)"/></g>'
-    + '<g class="cx-spark" style="animation-delay:.9s"><rect x="33" y="30" width="2" height="2" fill="#E4665A" transform="rotate(45 34 31)"/></g>'
-    + '<g class="cx-hbounce"><rect x="13" y="10" width="18" height="14" rx="3" fill="#E08868"/><rect x="17" y="14.6" width="2" height="3" fill="#20242B"/><rect x="25" y="14.6" width="2" height="3" fill="#20242B"/>'
-    + '<g class="cx-arm-lh"><rect x="6" y="6" width="4.5" height="3" rx="1" fill="#E08868"/></g><g class="cx-arm-rh"><rect x="33.5" y="6" width="4.5" height="3" rx="1" fill="#E08868"/></g></g>'
-    + '</svg>';
+  /* クロド（案内キャラ）のドット絵。mockups/mock_c_game.html の pixelClawd() を移植・簡略化（通常／cheerの2モードのみ）。 */
+  function pixelClawd(cheer) {
+    var armL = cheer
+      ? '<rect x="1.5" y="9.5" width="2" height="3.5" fill="#E08868"/>'
+      : '<rect x="1.5" y="12.5" width="3" height="2" fill="#E08868"/>';
+    var armR = cheer
+      ? '<rect x="12.5" y="9.5" width="2" height="3.5" fill="#E08868"/>'
+      : '<rect x="11.5" y="12.5" width="3" height="2" fill="#E08868"/>';
+    var sparkle = cheer
+      ? '<g class="cx-spark"><rect x="0.5" y="1.5" width="1.2" height="1.2" fill="#E8B23C"/></g>'
+        + '<g class="cx-spark" style="animation-delay:.3s"><rect x="14" y="3" width="1.2" height="1.2" fill="#4C8DFF"/></g>'
+        + '<g class="cx-spark" style="animation-delay:.6s"><rect x="1.5" y="9" width="1" height="1" fill="#4FBF8A"/></g>'
+      : '';
+    return '<svg viewBox="0 0 16 16" width="76" height="76" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="'
+      + (cheer ? 'ナビゲーターのクロドがガッツポーズで喜んでいます' : 'ナビゲーターのクロドが案内しています') + '">'
+      + '<rect x="7" y="0.5" width="2" height="2" fill="#2B4A78"/>'
+      + '<rect x="7.3" y="0" width="1.4" height="1" fill="' + (cheer ? '#E8B23C' : '#4C8DFF') + '"/>'
+      + '<rect x="3" y="2.5" width="10" height="10" fill="#16233A"/>'
+      + '<rect x="4" y="3.5" width="8" height="1.2" fill="#4C8DFF"/>'
+      + '<rect x="4" y="5.2" width="8" height="7.3" fill="#E08868"/>'
+      + '<rect x="5" y="6.5" width="1.6" height="1.6" fill="#20242B"/><rect x="9.4" y="6.5" width="1.6" height="1.6" fill="#20242B"/>'
+      + '<rect x="6.5" y="10" width="3" height="0.8" fill="#20242B"/>'
+      + armL + armR
+      + '<rect x="3.5" y="13" width="9" height="2.5" fill="#2B4A78"/>'
+      + sparkle
+      + '</svg>';
+  }
+  var MASCOT_TYPING = pixelClawd(false);
+  var MASCOT_HAPPY = pixelClawd(true);
 
   /* ===================== 状態管理 ===================== */
   var state = {
@@ -1526,6 +1542,35 @@ Central AX Claude Code研修 教材　v1.1
   var lastPrompt = {};
   var mascotMode = null;
   var mascotTimer = null;
+  var hasNavigated = false;
+
+  /* ===================== クロドの反応セリフ ===================== */
+  var CLAWD_ROLE_ON = {
+    keiei: '壁打ち役として動く準備をするのだ。',
+    eigyo: '提案書づくりの相棒になるのだ。',
+    marke: 'ネタ集めが得意になるのだ。',
+    cs: '問い合わせ対応を手伝うのだ。',
+    jinji: '日程調整とヒアリングを任せてほしいのだ。',
+    keiri: '日次の記録を溜めていくのだ。',
+    bo: 'ナレッジ整備をがんばるのだ。',
+    qa: '仕様の穴を一緒に探すのだ。',
+    design: '参考事例を集めておくのだ。'
+  };
+  var CLAWD_STAGE_LINE = {
+    1: 'ここでは秘書の「ガワ」をつくるのだ。会社名と役割を教えてほしいのだ。',
+    2: 'つぎは「能力」を授けるのだ。ユニバーサル・スキルに役割の鉄板スキルを足していくのだ。',
+    3: '最後は「中身」を育てるのだ。会社の資料をcontext/に集めるほど理解度が上がるのだ。'
+  };
+  var CLAWD_DL_LINE = {
+    1: '第1部のセットをダウンロードしたのだ。Claude Codeに貼って試してみてほしいのだ。',
+    2: '第2部のセットをダウンロードしたのだ。スキルとチームがどんどん増えていくのだ。',
+    3: '第3部のセットをダウンロードしたのだ。資料が増えるほど自社理解度が上がっていくのだ。'
+  };
+  function clawdRoleLine(k, checked) {
+    var name = ROLES[k].name;
+    if (checked) { return '『' + name + '』を選んだのだね。' + (CLAWD_ROLE_ON[k] || ''); }
+    return '『' + name + '』を外したのだね。またいつでも選び直せるのだ。';
+  }
 
   /* ===================== helpers ===================== */
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
@@ -1597,7 +1642,7 @@ Central AX Claude Code研修 教材　v1.1
       cell.querySelector('input').addEventListener('change', function (e) {
         if (e.target.checked) { state.roles.add(k); } else { state.roles.delete(k); }
         cell.classList.toggle('checked', e.target.checked);
-        onRoleChange();
+        onRoleChange(k, e.target.checked);
       });
       grid.appendChild(cell);
     });
@@ -1610,7 +1655,7 @@ Central AX Claude Code研修 教材　v1.1
       document.getElementById('roleOtherBox').style.display = state.otherOn ? 'block' : 'none';
       if (state.otherOn) {
         document.getElementById('roleOtherInput').focus();
-        say('その他の役割を自由に書いてください（例：税理士・カスタマーサクセス）');
+        say('その他の役割を自由に書いてほしいのだ（例：税理士・カスタマーサクセス）');
       } else {
         state.otherText = '';
         document.getElementById('roleOtherInput').value = '';
@@ -1620,13 +1665,17 @@ Central AX Claude Code研修 教材　v1.1
     grid.appendChild(otherCell);
   }
 
-  function onRoleChange() {
+  function onRoleChange(k, checked) {
     hop();
     applyRoleDefaults();
     hideStageWarn();
     renderStep2();
     renderStep3();
-    say(hasRole() ? '役割を選ぶと、おすすめのスキルが変わります' : '先に①で役割を選んでください（複数選べます）');
+    if (k) {
+      say(clawdRoleLine(k, checked));
+    } else {
+      say(hasRole() ? '役割を選ぶと、おすすめのスキルが変わるのだ' : '先に①で役割を選んでほしいのだ（複数選べるのだ）');
+    }
     saveState();
   }
 
@@ -1938,9 +1987,9 @@ Central AX Claude Code研修 教材　v1.1
     clearTimeout(mascotTimer);
     mascotTimer = setTimeout(function () { setMascot('typing'); }, 2200);
     if (state.implemented.size === 3) {
-      say('3つのステージが揃いました。下の「完成画面へ」から進みましょう');
+      say('3つのステージが揃ったのだ。下の「完成画面へ」から進んでほしいのだ');
     } else {
-      say('第' + n + '部が組み上がりました。DLしてClaude Codeに渡してみましょう');
+      say('第' + n + '部が組み上がったのだ。DLしてClaude Codeに渡してみてほしいのだ');
     }
     saveState();
     document.getElementById('result' + n).scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -1960,6 +2009,7 @@ Central AX Claude Code研修 教材　v1.1
     state.downloaded.add(n);
     updateDLMark(n);
     renderResultBlock(n);
+    say(CLAWD_DL_LINE[n]);
     saveState();
   }
 
@@ -2013,6 +2063,8 @@ Central AX Claude Code研修 教材　v1.1
     document.getElementById('mainFooter').style.display = '';
     state.currentStage = n;
     setMascot('typing');
+    if (hasNavigated && CLAWD_STAGE_LINE[n]) { say(CLAWD_STAGE_LINE[n]); }
+    hasNavigated = true;
     window.scrollTo({ top: 0, behavior: 'smooth' });
     saveState();
   }
@@ -2028,7 +2080,7 @@ Central AX Claude Code研修 教材　v1.1
     document.getElementById('stage-4').classList.add('active');
     document.getElementById('mainFooter').style.display = 'none';
     setMascot('happy');
-    say('AI秘書の組み立てが完成しました。おつかれさまでした');
+    say('AI秘書の組み立てが完成したのだ。おつかれさまなのだ！');
     window.scrollTo({ top: 0, behavior: 'smooth' });
     state.currentStage = 4;
     saveState();
@@ -2073,9 +2125,11 @@ Central AX Claude Code研修 教材　v1.1
     col.classList.remove('hop'); void col.offsetWidth; col.classList.add('hop');
   }
   function say(msg) {
-    var b = document.getElementById('bubble');
+    var wrap = document.getElementById('bubble');
+    var b = document.getElementById('bubbleText');
     b.textContent = msg;
-    b.classList.remove('pulse'); void b.offsetWidth; b.classList.add('pulse');
+    wrap.classList.remove('pulse'); void wrap.offsetWidth; wrap.classList.add('pulse');
+    hop();
   }
 
   /* ===================== resume banner / reset ===================== */
@@ -2184,7 +2238,7 @@ Central AX Claude Code研修 教材　v1.1
   }
   if (restored && hasAnyProgress()) {
     document.getElementById('resumeBanner').style.display = 'flex';
-    say('前回の続きから復元しました');
+    say('前回の続きから復元したのだ。入力と進捗をそのまま持ってきたのだ。');
   }
 
   /* 動的に生成するボタンのonclickから呼べるよう公開する */
