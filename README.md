@@ -26,7 +26,7 @@
 ## もっと本格的に始めたい方へ
 
 ```
-claude plugin marketplace add JunP1ayer/claude-plugins
+claude plugin marketplace add https://github.com/Central-AX/claude-plugins
 ```
 
 のあと `/first-setup` を実行すると、職種別の初期設定プラグインが使えます。
