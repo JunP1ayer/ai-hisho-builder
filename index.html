@@ -756,7 +756,7 @@
       <div class="mascot-col" id="mascotCol">
         <div id="mascotSlot"></div>
         <div class="bubble" id="bubble">
-          <div class="bubble-name">ナビゲーター：クロド</div>
+          <div class="bubble-name">ナビゲーター：クロドン</div>
           <div id="bubbleText">会社名とお名前を入れたら、まず役割を選んでみてほしいのだ（複数選べるのだ）。</div>
         </div>
       </div>
@@ -1499,30 +1499,48 @@ Central AX Claude Code研修 教材　v1.1
     3: '<code>context/</code>フォルダの充実度が、AI秘書の自社理解度を決めます。会社の事実は<b>ストック</b>（今の正しい状態・上書きで更新）、日々のやり取りは<b>フロー</b>（時系列で追記）として分けて置くのがコツです。この2つを混ぜると、どこが最新の正しい情報か分からなくなります。使うほど事実が増え、回答の的中率が上がっていきます。'
   };
 
-  /* クロド（案内キャラ）のドット絵。mockups/mock_c_game.html の pixelClawd() を移植・簡略化（通常／cheerの2モードのみ）。 */
+  /* クロドン（案内キャラ・カニ型ヘッドホン）のドット絵。通常／cheerの2モードのみ。 */
   function pixelClawd(cheer) {
     var armL = cheer
-      ? '<rect x="1.5" y="9.5" width="2" height="3.5" fill="#E08868"/>'
-      : '<rect x="1.5" y="12.5" width="3" height="2" fill="#E08868"/>';
+      ? '<rect x="0.8" y="4.8" width="2" height="2.6" fill="#DE886D"/>'
+      : '<rect x="0.5" y="9" width="2" height="2" fill="#DE886D"/>';
     var armR = cheer
-      ? '<rect x="12.5" y="9.5" width="2" height="3.5" fill="#E08868"/>'
-      : '<rect x="11.5" y="12.5" width="3" height="2" fill="#E08868"/>';
+      ? '<rect x="13.2" y="4.8" width="2" height="2.6" fill="#DE886D"/>'
+      : '<rect x="13.5" y="9" width="2" height="2" fill="#DE886D"/>';
+    var eyes = cheer
+      ? '<g fill="none" stroke="#000000" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round">'
+        + '<polyline points="4,9 5,10 6,9"/>'
+        + '<polyline points="10,9 11,10 12,9"/>'
+        + '</g>'
+      : '<rect x="4.5" y="8" width="1" height="2" fill="#000000"/><rect x="10.5" y="8" width="1" height="2" fill="#000000"/>';
+    var headband = '<g fill="#1D5C83">'
+      + '<rect x="5" y="2.6" width="6" height="0.8"/>'
+      + '<rect x="4.2" y="2.9" width="0.8" height="0.8"/><rect x="11" y="2.9" width="0.8" height="0.8"/>'
+      + '<rect x="3.4" y="3.4" width="0.8" height="0.8"/><rect x="11.8" y="3.4" width="0.8" height="0.8"/>'
+      + '<rect x="2.6" y="4.1" width="0.8" height="0.8"/><rect x="12.6" y="4.1" width="0.8" height="0.8"/>'
+      + '<rect x="1.9" y="5.0" width="0.8" height="0.8"/><rect x="13.3" y="5.0" width="0.8" height="0.8"/>'
+      + '</g>';
+    var earcups = '<rect x="0.7" y="7" width="0.6" height="2.4" fill="#1D5C83"/>'
+      + '<rect x="1.3" y="6.5" width="0.6" height="3.2" fill="#256891"/>'
+      + '<rect x="1.9" y="6" width="0.6" height="4" fill="#2E7AA8"/>'
+      + '<rect x="14.7" y="7" width="0.6" height="2.4" fill="#1D5C83"/>'
+      + '<rect x="14.1" y="6.5" width="0.6" height="3.2" fill="#256891"/>'
+      + '<rect x="13.5" y="6" width="0.6" height="4" fill="#2E7AA8"/>';
     var sparkle = cheer
       ? '<g class="cx-spark"><rect x="0.5" y="1.5" width="1.2" height="1.2" fill="#E8B23C"/></g>'
         + '<g class="cx-spark" style="animation-delay:.3s"><rect x="14" y="3" width="1.2" height="1.2" fill="#4C8DFF"/></g>'
         + '<g class="cx-spark" style="animation-delay:.6s"><rect x="1.5" y="9" width="1" height="1" fill="#4FBF8A"/></g>'
       : '';
     return '<svg viewBox="0 0 16 16" width="76" height="76" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="'
-      + (cheer ? 'ナビゲーターのクロドがガッツポーズで喜んでいます' : 'ナビゲーターのクロドが案内しています') + '">'
-      + '<rect x="7" y="0.5" width="2" height="2" fill="#2B4A78"/>'
-      + '<rect x="7.3" y="0" width="1.4" height="1" fill="' + (cheer ? '#E8B23C' : '#4C8DFF') + '"/>'
-      + '<rect x="3" y="2.5" width="10" height="10" fill="#16233A"/>'
-      + '<rect x="4" y="3.5" width="8" height="1.2" fill="#4C8DFF"/>'
-      + '<rect x="4" y="5.2" width="8" height="7.3" fill="#E08868"/>'
-      + '<rect x="5" y="6.5" width="1.6" height="1.6" fill="#20242B"/><rect x="9.4" y="6.5" width="1.6" height="1.6" fill="#20242B"/>'
-      + '<rect x="6.5" y="10" width="3" height="0.8" fill="#20242B"/>'
+      + (cheer ? 'ナビゲーターのクロドンがガッツポーズで喜んでいます' : 'ナビゲーターのクロドンが案内しています') + '">'
+      + '<rect x="3.5" y="15" width="9" height="0.8" fill="#000000" opacity="0.12"/>'
+      + '<rect x="3.5" y="13" width="1" height="2" fill="#DE886D"/><rect x="5.5" y="13" width="1" height="2" fill="#DE886D"/>'
+      + '<rect x="9.5" y="13" width="1" height="2" fill="#DE886D"/><rect x="11.5" y="13" width="1" height="2" fill="#DE886D"/>'
+      + '<rect x="2.5" y="6" width="11" height="7" fill="#DE886D"/>'
       + armL + armR
-      + '<rect x="3.5" y="13" width="9" height="2.5" fill="#2B4A78"/>'
+      + headband
+      + earcups
+      + eyes
       + sparkle
       + '</svg>';
   }
@@ -1544,7 +1562,7 @@ Central AX Claude Code研修 教材　v1.1
   var mascotTimer = null;
   var hasNavigated = false;
 
-  /* ===================== クロドの反応セリフ ===================== */
+  /* ===================== クロドンの反応セリフ ===================== */
   var CLAWD_ROLE_ON = {
     keiei: '壁打ち役として動く準備をするのだ。',
     eigyo: '提案書づくりの相棒になるのだ。',
