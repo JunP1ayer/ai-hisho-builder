@@ -806,6 +806,31 @@
     color: var(--faint);
     font-weight: 700;
   }
+  .footer-badges {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 28px;
+  }
+  .footer-badge {
+    display: inline-block;
+    border: 1px solid var(--blue);
+    color: var(--blue);
+    background: var(--paper);
+    font-family: var(--font-sans);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    padding: 3px 10px;
+  }
+  .footer-copyright {
+    font-family: var(--font-sans);
+    font-size: 10.5px;
+    color: var(--faint);
+    text-align: center;
+    line-height: 1.8;
+    margin-top: 10px;
+  }
   footer h3 {
     font-size: 22px;
     font-weight: 700;
@@ -1069,6 +1094,8 @@
     </div>
     <p class="note">Central AX Claude Code研修で配布している教材です。</p>
     <p class="note"><button type="button" class="reset-link" onclick="resetAll()">最初からやり直す（入力内容をすべて削除）</button></p>
+    <div class="footer-badges"><span class="footer-badge">受講者限定</span><span class="footer-badge">無断転載・再配布禁止</span></div>
+    <p class="footer-copyright">© 2026 株式会社 Central AX ― 本ツールは Central AX Claude Code研修の受講者向けに株式会社 Central AX が公開・提供しています。著作権は株式会社 Central AX に帰属します。</p>
   </footer>
 
 </div>
@@ -2258,6 +2285,8 @@ Central AX Claude Code研修 教材　v1.1
       + '<h3>もっと本格的に始めたい方へ</h3>'
       + '<div class="cmd-block">claude plugin marketplace add https://github.com/Central-AX/claude-plugins<span class="arrow">→</span>/first-setup</div>'
       + '<p class="note">これは Central AX Claude Code研修で配布している教材です。</p>'
+      + '<div class="footer-badges"><span class="footer-badge">受講者限定</span><span class="footer-badge">無断転載・再配布禁止</span></div>'
+      + '<p class="footer-copyright">© 2026 株式会社 Central AX ― 本ツールは Central AX Claude Code研修の受講者向けに株式会社 Central AX が公開・提供しています。著作権は株式会社 Central AX に帰属します。</p>'
       + '</footer>';
     h += '<div class="stage-foot"><button type="button" onclick="AISHO.go(1)">◀ 見直す</button><button type="button" class="reset-link" onclick="AISHO.resetAll()">最初からやり直す（入力内容をすべて削除）</button></div>';
     box.innerHTML = h;
