@@ -214,13 +214,67 @@
     75% { opacity: 1; transform: translate(0.8px, -2px); }
     90% { opacity: 0; transform: translate(2.5px, -5px); }
   }
+
+  /* クロドン 仕草（入場カニ歩き／視線／居眠り／なでなで／クリック跳ね） */
+  #mascotSlot { cursor: pointer; }
+  .mascot-col.kd-enter svg { animation: kdEnter 1.2s ease-out; }
+  @keyframes kdEnter {
+    0% { transform: translateX(90px); }
+    100% { transform: translateX(0); }
+  }
+  .mascot-col.kd-enter .kd-leg-a { animation: kdScuttleA .18s ease-in-out infinite; }
+  .mascot-col.kd-enter .kd-leg-b { animation: kdScuttleB .18s ease-in-out infinite; }
+  @keyframes kdScuttleA { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-0.6px); } }
+  @keyframes kdScuttleB { 0%, 100% { transform: translateY(-0.6px); } 50% { transform: translateY(0); } }
+  .kd-gaze { animation: kdGaze 7s ease-in-out infinite; }
+  @keyframes kdGaze {
+    0%, 24%, 46%, 72%, 100% { transform: translateX(0); }
+    30%, 40% { transform: translateX(-0.6px); }
+    52%, 66% { transform: translateX(0.6px); }
+  }
+  .kd-smile { opacity: 0; }
+  .mascot-col.kd-shy .kd-smile { opacity: 1; }
+  .mascot-col.kd-shy .kd-gaze { opacity: 0; }
+  .mascot-col.kd-shy .kd-body { animation: kdShiver .4s ease-in-out infinite; }
+  @keyframes kdShiver { 0%, 100% { transform: rotate(-1.5deg); } 50% { transform: rotate(1.5deg); } }
+  .mascot-col.kd-doze .kd-body { animation: kdSnore 2.8s ease-in-out infinite; }
+  @keyframes kdSnore { 0%, 100% { transform: scaleY(1); } 50% { transform: scaleY(1.02); } }
+  .mascot-col.kd-doze .kd-gaze { animation: none; }
+  .mascot-col.kd-doze .kd-eyes { animation: none; transform: scaleY(0.1); }
+  .mascot-col.kd-doze .kd-smile { opacity: 0; }
+  .mascot-col.kd-doze .kd-note-l, .mascot-col.kd-doze .kd-note-r { animation: none; opacity: 0; }
+  .mascot-col.kd-doze .kd-cup-l, .mascot-col.kd-doze .kd-cup-r { animation: none; }
+  .kd-zz { opacity: 0; }
+  .mascot-col.kd-doze .kd-zz-1 { animation: kdZz 2.8s ease-out infinite; }
+  .mascot-col.kd-doze .kd-zz-2 { animation: kdZz 2.8s ease-out infinite; animation-delay: 1.4s; }
+  @keyframes kdZz {
+    0%, 100% { opacity: 0; transform: translate(0, 0); }
+    15% { opacity: 1; transform: translate(0.5px, -1.5px); }
+    55% { opacity: 0; transform: translate(2px, -4px); }
+  }
+  .mascot-col.kd-jump svg { animation: kdJump .7s cubic-bezier(.3, 0, .4, 1); }
+  @keyframes kdJump {
+    0% { transform: translateY(0); }
+    20% { transform: translateY(-11px); }
+    45% { transform: translateY(0) scaleY(.94); }
+    60% { transform: translateY(-5px); }
+    80% { transform: translateY(0) scaleY(.97); }
+    100% { transform: translateY(0); }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .mascot-col.hop svg,
+    .mascot-col.kd-enter svg,
+    .mascot-col.kd-jump svg,
+    .mascot-col.kd-enter .kd-leg-a,
+    .mascot-col.kd-enter .kd-leg-b,
     .cx-spark,
     .kd-body,
     .kd-cup-l,
     .kd-cup-r,
     .kd-eyes,
+    .kd-gaze,
+    .kd-zz,
     .kd-note-l,
     .kd-note-r {
       animation: none !important;
@@ -1570,7 +1624,11 @@ Central AX Claude Code研修 教材　v1.1
         + '<polyline points="4,9 5,10 6,9"/>'
         + '<polyline points="10,9 11,10 12,9"/>'
         + '</g>'
-      : '<g class="kd-eyes"><rect x="4.5" y="8" width="1" height="2" fill="#000000"/><rect x="10.5" y="8" width="1" height="2" fill="#000000"/></g>';
+      : '<g class="kd-gaze"><g class="kd-eyes"><rect x="4.5" y="8" width="1" height="2" fill="#000000"/><rect x="10.5" y="8" width="1" height="2" fill="#000000"/></g></g>'
+        + '<g class="kd-smile" fill="none" stroke="#000000" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round">'
+        + '<polyline points="4,9 5,10 6,9"/>'
+        + '<polyline points="10,9 11,10 12,9"/>'
+        + '</g>';
     var headband = '<g fill="#1D5C83">'
       + '<rect x="5" y="2.6" width="6" height="0.8"/>'
       + '<rect x="4.2" y="2.9" width="0.8" height="0.8"/><rect x="11" y="2.9" width="0.8" height="0.8"/>'
@@ -1602,8 +1660,8 @@ Central AX Claude Code研修 教材　v1.1
     return '<svg viewBox="0 0 16 16" width="76" height="76" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="'
       + (cheer ? 'ナビゲーターのクロドンがガッツポーズで喜んでいます' : 'ナビゲーターのクロドンが案内しています') + '">'
       + '<rect x="3.5" y="15" width="9" height="0.8" fill="#000000" opacity="0.12"/>'
-      + '<rect x="3.5" y="13" width="1" height="2" fill="#DE886D"/><rect x="5.5" y="13" width="1" height="2" fill="#DE886D"/>'
-      + '<rect x="9.5" y="13" width="1" height="2" fill="#DE886D"/><rect x="11.5" y="13" width="1" height="2" fill="#DE886D"/>'
+      + '<rect class="kd-leg-a" x="3.5" y="13" width="1" height="2" fill="#DE886D"/><rect class="kd-leg-b" x="5.5" y="13" width="1" height="2" fill="#DE886D"/>'
+      + '<rect class="kd-leg-a" x="9.5" y="13" width="1" height="2" fill="#DE886D"/><rect class="kd-leg-b" x="11.5" y="13" width="1" height="2" fill="#DE886D"/>'
       + '<g class="kd-body">'
       + '<rect x="2.5" y="6" width="11" height="7" fill="#DE886D"/>'
       + armL + armR
@@ -1613,6 +1671,8 @@ Central AX Claude Code研修 教材　v1.1
       + '</g>'
       + sparkle
       + noteL + noteR
+      + '<g class="kd-zz kd-zz-1" fill="#9DB4D0"><rect x="13.6" y="1.2" width="1.8" height="0.5"/><rect x="14.5" y="1.7" width="0.6" height="0.5"/><rect x="13.9" y="2.2" width="0.6" height="0.5"/><rect x="13.6" y="2.7" width="1.8" height="0.5"/></g>'
+      + '<g class="kd-zz kd-zz-2" fill="#B7C9DE"><rect x="15.2" y="0" width="1.2" height="0.4"/><rect x="15.8" y="0.4" width="0.5" height="0.4"/><rect x="15.3" y="0.8" width="0.5" height="0.4"/><rect x="15.2" y="1.2" width="1.2" height="0.4"/></g>'
       + '</svg>';
   }
   var MASCOT_TYPING = pixelClawd(false);
@@ -2221,6 +2281,64 @@ Central AX Claude Code研修 教材　v1.1
     hop();
   }
 
+  /* ===== クロドンの仕草（入場カニ歩き／居眠り／なでなで／クリック跳ね） ===== */
+  var kdCol = document.getElementById('mascotCol');
+  var kdSlot = document.getElementById('mascotSlot');
+  var KD_IDLE_MS = /[?&]dozetest=1/.test(location.search) ? 3000 : 60000;
+  var kdDozeTimer = null;
+  var kdShyCooldownAt = 0;
+
+  function kdStartEnter() {
+    try {
+      if (sessionStorage.getItem('kdEntered')) return;
+      sessionStorage.setItem('kdEntered', '1');
+    } catch (e) { /* sessionStorage不可なら毎回入場でよい */ }
+    kdCol.classList.add('kd-enter');
+    setTimeout(function () { kdCol.classList.remove('kd-enter'); }, 1300);
+  }
+
+  function kdArmDozeTimer() {
+    clearTimeout(kdDozeTimer);
+    kdDozeTimer = setTimeout(function () { kdCol.classList.add('kd-doze'); }, KD_IDLE_MS);
+  }
+  function kdIsDozing() { return kdCol.classList.contains('kd-doze'); }
+  function kdWake() {
+    if (kdIsDozing()) {
+      kdCol.classList.remove('kd-doze');
+      say('はっ、寝てないのだ！ちゃんと見てたのだ。');
+      setTimeout(function () { say('つづきをやっていくのだ。困ったらボクをクリックなのだ。'); }, 2200);
+    }
+    kdArmDozeTimer();
+  }
+  ['click', 'keydown', 'scroll', 'input'].forEach(function (ev) {
+    window.addEventListener(ev, kdWake, { passive: true });
+  });
+
+  var KD_CLICK_LINES = [
+    'CLAUDE.mdはボクが毎回最初に読む取扱説明書なのだ。',
+    'secrets/フォルダの中身は読めない設定にするのだ。安心なのだ。',
+    '困ったら「どうしたらいい？」って聞いてくれれば一緒に考えるのだ。',
+    '入力は自動で保存してるのだ。途中で閉じても続きからできるのだ。',
+    'ボクの体はぜんぶSVGとCSSでできてるのだ。軽いのだ。'
+  ];
+  kdSlot.addEventListener('mouseenter', function () {
+    if (kdIsDozing()) { kdWake(); return; }
+    kdCol.classList.add('kd-shy');
+    if (Date.now() > kdShyCooldownAt) {
+      kdShyCooldownAt = Date.now() + 10000;
+      say('なでてくれたのだね。ありがとうなのだ。');
+    }
+  });
+  kdSlot.addEventListener('mouseleave', function () { kdCol.classList.remove('kd-shy'); });
+  kdSlot.addEventListener('click', function (e) {
+    e.stopPropagation();
+    if (kdIsDozing()) { kdWake(); return; }
+    say(KD_CLICK_LINES[Math.floor(Math.random() * KD_CLICK_LINES.length)]);
+    kdCol.classList.remove('hop', 'kd-jump'); void kdCol.offsetWidth; kdCol.classList.add('kd-jump');
+    setTimeout(function () { kdCol.classList.remove('kd-jump'); }, 800);
+    kdArmDozeTimer();
+  });
+
   /* ===================== resume banner / reset ===================== */
   function closeResumeBanner() { document.getElementById('resumeBanner').style.display = 'none'; }
   function hasAnyProgress() {
@@ -2329,6 +2447,8 @@ Central AX Claude Code研修 教材　v1.1
     document.getElementById('resumeBanner').style.display = 'flex';
     say('前回の続きから復元したのだ。入力と進捗をそのまま持ってきたのだ。');
   }
+  kdStartEnter();
+  kdArmDozeTimer();
 
   /* 動的に生成するボタンのonclickから呼べるよう公開する */
   window.AISHO = {
